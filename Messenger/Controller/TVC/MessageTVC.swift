@@ -15,35 +15,60 @@ class MessageTVC: UITableViewCell {
     
     static let identifier = "MessageTVC"
     
-    @IBOutlet weak var rightView: UIView!
-    @IBOutlet weak var rightTextLbl: UILabel!
+    @IBOutlet weak var checkImg: UIImageView!
+    @IBOutlet weak var timeLbl: UILabel!
+    @IBOutlet weak var conteinerView: UIView!
+    @IBOutlet weak var textLbl: UILabel!
     
     
-    @IBOutlet weak var leftView: UIView!
-    @IBOutlet weak var leftTextLbl: UILabel!
+    
+    var trailingConst : NSLayoutConstraint!
+    var leadingConst: NSLayoutConstraint!
 
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        leadingConst.isActive = false
+        trailingConst.isActive = false
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-       
-        rightView.layer.cornerRadius = rightView.bounds.height * 0.15
-        rightView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
-        leftView.layer.cornerRadius = leftView.bounds.height * 0.15
-        leftView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        textLbl.textColor = .white
+        timeLbl.textColor = .white
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    func rightLbl(with: String){
-        rightTextLbl.text = with
+    func updateCell(message: MessageData){
+        conteinerView.layer.cornerRadius = conteinerView.bounds.height * 0.15
+        conteinerView.clipsToBounds = true
+        trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
+        leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
+        textLbl.text = message.text
+        
+        
+        if message.isFistUser{
+            conteinerView.backgroundColor = .systemGreen //#colorLiteral(red: 0.8862745098, green: 0.9843137255, blue: 0.7882352941, alpha: 1)
+            //timeLbl.textColor = #colorLiteral(red: 0.2078431373, green: 0.7803921569, blue: 0.2941176471, alpha: 1)
+            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
+            checkImg.isHidden = false
+            trailingConst.isActive = true
+            textLbl.textAlignment = .right
+        }else{
+            //timeLbl.textColor = .lightGray
+            conteinerView.backgroundColor = .systemBlue
+            checkImg.isHidden = true
+            leadingConst.isActive = true
+            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+            textLbl.textAlignment = .left
+        }
     }
     
-    func leftLbl(with: String){
-        leftTextLbl.text = with
-    }
     
     
 }

@@ -9,15 +9,23 @@ import UIKit
 import MobileCoreServices
 
 
-struct ChatDM {
-    var message: String?
-    var img: UIImage?
+struct MessageData {
+    
+    enum MediaType : String {
+        case photo = "Photo"
+        case audio = "Audio"
+        case file = "File"
+    }
+
+    var text: String?
+    var isFistUser: Bool
+    var image: UIImage?
+    var file: String?
+    var mediaType: MediaType?
 }
 
 
 class MainVC: UIViewController {
-
-    
     
     @IBOutlet weak var tableView: UITableView!{
         didSet{
@@ -30,46 +38,49 @@ class MainVC: UIViewController {
             tableView.register(FileTVC.unib(), forCellReuseIdentifier: FileTVC.identifier)
         }
     }
+    
     @IBOutlet weak var sendBtn: UIButton!
     
     @IBOutlet weak var textView: UITextView!{
         didSet{
             textView.delegate = self
-            textView.layer.cornerRadius = 17
-            textView.layer.borderWidth = 1
-            textView.layer.borderColor = UIColor.systemGray5.cgColor
-            textView.textContainerInset = UIEdgeInsets(top: 5, left: 7, bottom: 5, right: 0)
+            textView.layer.cornerRadius = textView.bounds.height * 0.47
+            textView.layer.borderWidth = 0.5
+            textView.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+            textView.textContainerInset = UIEdgeInsets(top: 7, left: 7, bottom: 5, right: 0)
         }
     }
+    
+    @IBOutlet weak var bottomConteinerView: UIView!{
+        didSet{
+            bottomConteinerView.layer.borderWidth = 0.5
+            bottomConteinerView.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        }
+    }
+    
     var imagePicker = UIImagePickerController()
-    var isPhoto = false
-    var isFile = false
     var isMicraphone = true
+    var messages: [MessageData] = []
     
-    var messages: [String] = []{
-        didSet{
-            self.tableView.reloadData()
-            self.scrollToBottom()
-        }
-    }
-    
-    var photos : [UIImage] = []{
-        didSet{
-            self.tableView.reloadData()
-            //self.scrollToBottom()
-        }
-    }
-    var file : [String] = [] {
-        didSet{
-            self.tableView.reloadData()
-            //self.scrollToBottom()
-        }
-    }
+
+    var isFirstUser = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        registerKeyboardNotifications()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
         
+        
+        //
+        
+//        subscribeToNotification(UIResponder.keyboardWillShowNotification, selector: #selector(keyboardWillShowOrHide))
+//        subscribeToNotification(UIResponder.keyboardWillHideNotification, selector: #selector(keyboardWillShowOrHide))
+//
+//        initializeHideKeyboard()
+    }
+    
+    @objc func dismissKeyboard(){
+        self.view.endEditing(true)
     }
     
     func scrollToBottom(){
@@ -78,6 +89,14 @@ class MainVC: UIViewController {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
+    
+    func openFilePicker() {
+        let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
+        documentPicker.delegate = self
+        
+        self.present(documentPicker,animated: true,completion: nil)
+    }
+    
     
     @IBAction func leftBtnTapped(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -95,10 +114,9 @@ class MainVC: UIViewController {
             
     
         
-        let file = UIAlertAction(title: "File", style: .default) { _ in
-            self.isFile = true
-            self.isPhoto = false
-            self.file.append("2")
+        let file = UIAlertAction(title: "File", style: .default) { [self] _ in
+            openFilePicker()
+            
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -111,44 +129,50 @@ class MainVC: UIViewController {
     }
     
     @IBAction func sendBtnTapped(_ sender: Any) {
-        isFile = false
-        isPhoto = false
+      
         if !textView.text!.isEmpty && !isMicraphone{
-            
-            messages.append(textView.text!)
+            messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
+            tableView.beginUpdates()
+            tableView.insertRows(at: [IndexPath.init(row: messages.count - 1, section: 0)], with: .fade)
+            tableView.endUpdates()
+            tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+            isFirstUser = !isFirstUser
             textView.text.removeAll()
         }else{
             
         }
     }
     
-
-
 }
 
 //MARK:- TableView Delegate
 extension MainVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isPhoto{
-            
-            return photos.count
-        }else if isFile{
-            return file.count
-        }else{
-            return messages.count
-        }
         
+        return messages.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 49
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if isPhoto{
+        if messages[indexPath.row].image != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
             
-            cell.updadeCell(with: photos[indexPath.row])
+            cell.updadeCell(with: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
-        }else if isFile{
+        }else if messages[indexPath.row].file != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             
             cell.selectionStyle = .none
@@ -156,15 +180,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         }else{
             let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
             
-            if indexPath.row % 2 == 0{
-                cell.rightLbl(with: messages[indexPath.row])
-                cell.leftView.isHidden = true
-                cell.rightView.isHidden = false
-            }else{
-                cell.leftLbl(with: messages[indexPath.row])
-                cell.rightView.isHidden = true
-                cell.leftView.isHidden = false
-            }
+            cell.updateCell(message: messages[indexPath.row])
             
             cell.selectionStyle = .none
             
@@ -195,7 +211,7 @@ extension MainVC: UITextViewDelegate{
             sendBtn.tintColor = .systemBlue
             isMicraphone = false
         }else{
-            sendBtn.setBackgroundImage(UIImage(systemName: "mic"), for: .normal)
+            sendBtn.setBackgroundImage(UIImage(named: "mic"), for: .normal)
             sendBtn.tintColor = .systemGray2
             isMicraphone = true
             }
@@ -204,50 +220,6 @@ extension MainVC: UITextViewDelegate{
 }
 
 
-//MARK: - Keyboard Handling
-
-extension MainVC {
-    
-    func registerKeyboardNotifications() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        self.view.addGestureRecognizer(tap)
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow(notification:)),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil)
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide(notification:)),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil)
-        
-    }
-    @objc func hideKeyboard() {
-        self.view.endEditing(true)
-        
-    }
-    
-    @objc func keyboardWillShow(notification: NSNotification) {
-        let userInfo: NSDictionary = notification.userInfo! as NSDictionary
-        let keyboardInfo = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue
-        let size = keyboardInfo.cgRectValue.size
-        
-        UIView.animate(withDuration: 0.5) {
-            self.view.transform = CGAffineTransform(translationX: 0, y: -size.height)
-        }
-    }
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-        UIView.animate(withDuration: 0.5) {
-            self.view.transform = .identity
-        }
-    }
-
-}
-
 //MARK: - ImageView Delegate
 
 extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
@@ -255,10 +227,12 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
         let mediaType = info[UIImagePickerController.InfoKey.mediaType] as! CFString
         switch mediaType {
         case kUTTypeImage:
-            self.isPhoto = true
+            
             let editedImg = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
-            photos.append(editedImg)
-
+            
+            messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: editedImg))
+            tableView.reloadData()
+            tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
         default:
             break
         }
@@ -268,5 +242,104 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
 }
 
 
-
+extension MainVC: UIDocumentPickerDelegate{
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        self.messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: nil, file: "file", mediaType: nil))
+        tableView.reloadData()
+        tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+        print(urls)
+    }
     
+    
+//    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+//            let newUrls = urls.compactMap { (url: URL) -> URL? in
+//                // Create file URL to temporary folder
+//                var tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
+//                // Apend filename (name+extension) to URL
+//                tempURL.appendPathComponent(url.lastPathComponent)
+//                do {
+//                    // If file with same name exists remove it (replace file with new one)
+//                    if FileManager.default.fileExists(atPath: tempURL.path) {
+//                        try FileManager.default.removeItem(atPath: tempURL.path)
+//                    }
+//                    // Move file from app_id-Inbox to tmp/filename
+//                    try FileManager.default.moveItem(atPath: url.path, toPath: tempURL.path)
+//                    return tempURL
+//                } catch {
+//                    print(error.localizedDescription)
+//                    return nil
+//                }
+//            }
+//            // ... do something with URLs
+//        }
+}
+
+//extension MainVC {
+//
+//
+//
+//
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        unsubscribeFromAllNotifications()
+//    }
+//
+//}
+//
+//// MARK : Keyboard Dismissal Handling on Tap
+//private extension MainVC {
+//
+//    func initializeHideKeyboard(){
+//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+//            target: self,
+//            action: #selector(dismissMyKeyboard))
+//
+//        view.addGestureRecognizer(tap)
+//    }
+//
+//    @objc func dismissMyKeyboard(){
+//        view.endEditing(true)
+//    }
+//}
+//
+//// MARK : Textfield Visibility Handling with Scroll
+//private extension MainVC {
+//
+//    func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {
+//        NotificationCenter.default.addObserver(self, selector: selector, name: notification, object: nil)
+//    }
+//
+//    func unsubscribeFromAllNotifications() {
+//        NotificationCenter.default.removeObserver(self)
+//    }
+//
+//    @objc func keyboardWillShowOrHide(notification: NSNotification) {
+//
+//        // Pull a bunch of info out of the notification
+//        if let scrollView = backgroundSV, let userInfo = notification.userInfo, let endValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey], let durationValue = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] {
+//
+//            // Transform the keyboard's frame into our view's coordinate system
+//            let endRect = view.convert((endValue as AnyObject).cgRectValue, from: view.window)
+//
+//            // Find out how much the keyboard overlaps the scroll view
+//            // We can do this because our scroll view's frame is already in our view's coordinate system
+//            let keyboardOverlap = scrollView.frame.maxY - endRect.origin.y
+//
+//            // Set the scroll view's content inset to avoid the keyboard
+//            // Don't forget the scroll indicator too!
+//            scrollView.contentInset.bottom = keyboardOverlap
+//            scrollView.scrollIndicatorInsets.bottom = keyboardOverlap
+//
+//            let duration = (durationValue as AnyObject).doubleValue
+//            let options = UIView.AnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
+//            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
+//                self.view.layoutIfNeeded()
+//            }, completion: nil)
+//        }
+//    }
+//
+//}
+
+
+
+

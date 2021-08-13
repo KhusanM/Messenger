@@ -53,9 +53,9 @@ class PhotoTVC: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func updadeCell(with: UIImage){
-        backGroundPhoto.image = with
-        imgView.image = with
+    func updadeCell(with: MessageData){
+        backGroundPhoto.image = with.image
+        imgView.image = with.image
         blurEffect()
     }
     

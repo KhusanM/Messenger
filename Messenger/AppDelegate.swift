@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -27,6 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             // Fallback on earlier versions
         }
+        
+        
+        
         return true
     }
 

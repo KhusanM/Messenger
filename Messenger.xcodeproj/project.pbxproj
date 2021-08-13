@@ -13,6 +13,7 @@
 		D025845526C3E7BA00150352 /* PhotoTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845326C3E7BA00150352 /* PhotoTVC.xib */; };
 		D025845726C3FFB400150352 /* FileTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D025845626C3FFB400150352 /* FileTVC.swift */; };
 		D025845926C3FFC600150352 /* FileTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845826C3FFC600150352 /* FileTVC.xib */; };
+		D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D025845E26C5232E00150352 /* GoogleService-Info.plist */; };
 		D0EAA96F26C26CD000256412 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EAA96E26C26CD000256412 /* AppDelegate.swift */; };
 		D0EAA97826C26CD800256412 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0EAA97726C26CD800256412 /* Assets.xcassets */; };
 		D0EAA97B26C26CD800256412 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0EAA97926C26CD800256412 /* LaunchScreen.storyboard */; };
@@ -27,6 +28,7 @@
 		D025845326C3E7BA00150352 /* PhotoTVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotoTVC.xib; sourceTree = "<group>"; };
 		D025845626C3FFB400150352 /* FileTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileTVC.swift; sourceTree = "<group>"; };
 		D025845826C3FFC600150352 /* FileTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileTVC.xib; sourceTree = "<group>"; };
+		D025845E26C5232E00150352 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0EAA96B26C26CD000256412 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0EAA96E26C26CD000256412 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0EAA97726C26CD800256412 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 		D0EAA96D26C26CD000256412 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
+				D025845E26C5232E00150352 /* GoogleService-Info.plist */,
 				D0EAA96E26C26CD000256412 /* AppDelegate.swift */,
 				D0EAA98926C270D400256412 /* Helpers */,
 				D0EAA98626C270BA00256412 /* Model */,
@@ -193,6 +196,7 @@
 				D025845926C3FFC600150352 /* FileTVC.xib in Resources */,
 				D0EAA97B26C26CD800256412 /* LaunchScreen.storyboard in Resources */,
 				D0EAA97826C26CD800256412 /* Assets.xcassets in Resources */,
+				D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +351,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U23784U7DD;
 				INFOPLIST_FILE = Messenger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -365,6 +370,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U23784U7DD;
 				INFOPLIST_FILE = Messenger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
