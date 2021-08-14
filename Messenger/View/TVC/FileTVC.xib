@@ -49,8 +49,8 @@
                                             </stackView>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="pWD-dw-COB">
-                                        <rect key="frame" x="75.5" y="64" width="53.5" height="16"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="pWD-dw-COB">
+                                        <rect key="frame" x="77.5" y="64" width="51.5" height="16"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="14:07" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RcD-SX-q6h">
                                                 <rect key="frame" x="0.0" y="0.0" width="31.5" height="16"/>
@@ -59,7 +59,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checkmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="xAs-dc-vM4">
-                                                <rect key="frame" x="37.5" y="2" width="16" height="12.5"/>
+                                                <rect key="frame" x="35.5" y="2" width="16" height="12.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" red="0.20000000000000001" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
@@ -83,8 +83,8 @@
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="qxX-YM-cMe" firstAttribute="width" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="0.55" id="0kb-Cl-eii"/>
-                    <constraint firstAttribute="trailing" secondItem="qxX-YM-cMe" secondAttribute="trailing" constant="10" id="D0R-yi-9Sp"/>
+                    <constraint firstItem="qxX-YM-cMe" firstAttribute="width" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="0.5" id="0kb-Cl-eii"/>
+                    <constraint firstAttribute="trailing" secondItem="qxX-YM-cMe" secondAttribute="trailing" constant="10" placeholder="YES" id="D0R-yi-9Sp"/>
                     <constraint firstItem="qxX-YM-cMe" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="GCC-zI-0uA"/>
                     <constraint firstAttribute="bottom" secondItem="qxX-YM-cMe" secondAttribute="bottom" constant="5" id="cuR-48-TtI"/>
                 </constraints>

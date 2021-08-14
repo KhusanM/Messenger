@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+
 class PhotoTVC: UITableViewCell {
 
     
@@ -22,12 +24,39 @@ class PhotoTVC: UITableViewCell {
     
     var context = CIContext(options: nil)
 
+    
+    var trailingConst : NSLayoutConstraint!
+    var leadingConst: NSLayoutConstraint!
+
+    var delegate: ChatDelegate?
+    var index : IndexPath!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        leadingConst.isActive = false
+        trailingConst.isActive = false
+    }
+    
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        conteinerView.layer.cornerRadius = 20
+        //conteinerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
+    }
+    
     func blurEffect() {
         
         let currentFilter = CIFilter(name: "CIGaussianBlur")
         let beginImage = CIImage(image: backGroundPhoto.image!)
         currentFilter!.setValue(beginImage, forKey: kCIInputImageKey)
-        currentFilter!.setValue(10, forKey: kCIInputRadiusKey)
+        currentFilter!.setValue(40, forKey: kCIInputRadiusKey)
 
         let cropFilter = CIFilter(name: "CICrop")
         cropFilter!.setValue(currentFilter!.outputImage, forKey: kCIInputImageKey)
@@ -40,23 +69,28 @@ class PhotoTVC: UITableViewCell {
     }
     
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        conteinerView.layer.cornerRadius = 20
-        conteinerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
     func updadeCell(with: MessageData){
+        
+        trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
+        leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
+        
+        
+        if with.isFistUser{
+            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
+            trailingConst.isActive = true
+        }else{
+            leadingConst.isActive = true
+            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        }
+        
         backGroundPhoto.image = with.image
         imgView.image = with.image
         blurEffect()
     }
+    
+    @IBAction func didSelectBtnTapped(_ sender: UIButton) {
+        delegate?.didSelectImage(index: index)
+    }
+    
     
 }

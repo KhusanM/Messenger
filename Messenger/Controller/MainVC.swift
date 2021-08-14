@@ -9,6 +9,10 @@ import UIKit
 import MobileCoreServices
 
 
+protocol ChatDelegate {
+    func didSelectImage(index: IndexPath)
+}
+
 struct MessageData {
     
     enum MediaType : String {
@@ -16,7 +20,7 @@ struct MessageData {
         case audio = "Audio"
         case file = "File"
     }
-
+    
     var text: String?
     var isFistUser: Bool
     var image: UIImage?
@@ -32,7 +36,7 @@ class MainVC: UIViewController {
             tableView.delegate = self
             tableView.dataSource = self
             tableView.separatorStyle = .none
-            tableView.contentInset = UIEdgeInsets(top: 5, left: 0, bottom: 45, right: 0)
+            tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50, right: 0)
             tableView.register(MessageTVC.unib(), forCellReuseIdentifier: MessageTVC.identifier)
             tableView.register(PhotoTVC.unib(), forCellReuseIdentifier: PhotoTVC.identifier)
             tableView.register(FileTVC.unib(), forCellReuseIdentifier: FileTVC.identifier)
@@ -58,37 +62,41 @@ class MainVC: UIViewController {
         }
     }
     
-    var imagePicker = UIImagePickerController()
+   // var imagePicker = UIImagePickerController()
     var isMicraphone = true
     var messages: [MessageData] = []
     
-
+    var keyboardHeight: CGFloat!
     var isFirstUser = true
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tapGesture()
+        navigationItem.title = "Chat"
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+    }
+    
+    
+    private func tapGesture(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
-        
-        
-        //
-        
-//        subscribeToNotification(UIResponder.keyboardWillShowNotification, selector: #selector(keyboardWillShowOrHide))
-//        subscribeToNotification(UIResponder.keyboardWillHideNotification, selector: #selector(keyboardWillShowOrHide))
-//
-//        initializeHideKeyboard()
     }
     
     @objc func dismissKeyboard(){
         self.view.endEditing(true)
     }
     
-    func scrollToBottom(){
-        DispatchQueue.main.async {
-            let indexPath = IndexPath(row: self.messages.count-1, section: 0)
-            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        }
-    }
+//    func scrollToBottom(){
+//        DispatchQueue.main.async {
+//            let indexPath = IndexPath(row: self.messages.count-1, section: 0)
+//            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+//        }
+//    }
     
     func openFilePicker() {
         let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
@@ -102,17 +110,17 @@ class MainVC: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         let photo = UIAlertAction(title: "Photo", style: .default) { [self] _ in
-
+            
             let vc = UIImagePickerController()
             vc.sourceType = .photoLibrary
             vc.mediaTypes = [kUTTypeImage as String]
-            vc.allowsEditing = true
+            
             vc.delegate = self
             
             self.present(vc, animated: true, completion: nil)
-            }
-            
-    
+        }
+        
+        
         
         let file = UIAlertAction(title: "File", style: .default) { [self] _ in
             openFilePicker()
@@ -129,9 +137,10 @@ class MainVC: UIViewController {
     }
     
     @IBAction func sendBtnTapped(_ sender: Any) {
-      
+        
         if !textView.text!.isEmpty && !isMicraphone{
             messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
+            
             tableView.beginUpdates()
             tableView.insertRows(at: [IndexPath.init(row: messages.count - 1, section: 0)], with: .fade)
             tableView.endUpdates()
@@ -168,16 +177,13 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         
         if messages[indexPath.row].image != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
-            
+            cell.index = indexPath
+            cell.delegate = self
             cell.updadeCell(with: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
-        }else if messages[indexPath.row].file != nil{
-            let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             
-            cell.selectionStyle = .none
-            return cell
-        }else{
+        }else if messages[indexPath.row].text != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
             
             cell.updateCell(message: messages[indexPath.row])
@@ -185,7 +191,18 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
             cell.selectionStyle = .none
             
             return cell
+            
+        }else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
+            
+            cell.selectionStyle = .none
+            return cell
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        
     }
 }
 
@@ -204,7 +221,7 @@ extension MainVC: UITextViewDelegate{
         }
         return true
     }
-
+    
     func textViewDidChangeSelection(_ textView: UITextView) {
         if !textView.text.isEmpty{
             sendBtn.setBackgroundImage(UIImage(systemName: "arrow.up.circle.fill"), for: .normal)
@@ -214,7 +231,7 @@ extension MainVC: UITextViewDelegate{
             sendBtn.setBackgroundImage(UIImage(named: "mic"), for: .normal)
             sendBtn.tintColor = .systemGray2
             isMicraphone = true
-            }
+        }
     }
     
 }
@@ -228,11 +245,12 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
         switch mediaType {
         case kUTTypeImage:
             
-            let editedImg = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
+            let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
             
-            messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: editedImg))
+            messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
             tableView.reloadData()
             tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+            isFirstUser = !isFirstUser
         default:
             break
         }
@@ -251,95 +269,79 @@ extension MainVC: UIDocumentPickerDelegate{
     }
     
     
-//    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-//            let newUrls = urls.compactMap { (url: URL) -> URL? in
-//                // Create file URL to temporary folder
-//                var tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-//                // Apend filename (name+extension) to URL
-//                tempURL.appendPathComponent(url.lastPathComponent)
-//                do {
-//                    // If file with same name exists remove it (replace file with new one)
-//                    if FileManager.default.fileExists(atPath: tempURL.path) {
-//                        try FileManager.default.removeItem(atPath: tempURL.path)
-//                    }
-//                    // Move file from app_id-Inbox to tmp/filename
-//                    try FileManager.default.moveItem(atPath: url.path, toPath: tempURL.path)
-//                    return tempURL
-//                } catch {
-//                    print(error.localizedDescription)
-//                    return nil
-//                }
-//            }
-//            // ... do something with URLs
-//        }
+    //    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    //            let newUrls = urls.compactMap { (url: URL) -> URL? in
+    //                // Create file URL to temporary folder
+    //                var tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
+    //                // Apend filename (name+extension) to URL
+    //                tempURL.appendPathComponent(url.lastPathComponent)
+    //                do {
+    //                    // If file with same name exists remove it (replace file with new one)
+    //                    if FileManager.default.fileExists(atPath: tempURL.path) {
+    //                        try FileManager.default.removeItem(atPath: tempURL.path)
+    //                    }
+    //                    // Move file from app_id-Inbox to tmp/filename
+    //                    try FileManager.default.moveItem(atPath: url.path, toPath: tempURL.path)
+    //                    return tempURL
+    //                } catch {
+    //                    print(error.localizedDescription)
+    //                    return nil
+    //                }
+    //            }
+    //            // ... do something with URLs
+    //        }
 }
 
-//extension MainVC {
-//
-//
-//
-//
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        unsubscribeFromAllNotifications()
-//    }
-//
-//}
-//
-//// MARK : Keyboard Dismissal Handling on Tap
-//private extension MainVC {
-//
-//    func initializeHideKeyboard(){
-//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-//            target: self,
-//            action: #selector(dismissMyKeyboard))
-//
-//        view.addGestureRecognizer(tap)
-//    }
-//
-//    @objc func dismissMyKeyboard(){
-//        view.endEditing(true)
-//    }
-//}
-//
-//// MARK : Textfield Visibility Handling with Scroll
-//private extension MainVC {
-//
-//    func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {
-//        NotificationCenter.default.addObserver(self, selector: selector, name: notification, object: nil)
-//    }
-//
-//    func unsubscribeFromAllNotifications() {
-//        NotificationCenter.default.removeObserver(self)
-//    }
-//
-//    @objc func keyboardWillShowOrHide(notification: NSNotification) {
-//
-//        // Pull a bunch of info out of the notification
-//        if let scrollView = backgroundSV, let userInfo = notification.userInfo, let endValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey], let durationValue = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey], let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] {
-//
-//            // Transform the keyboard's frame into our view's coordinate system
-//            let endRect = view.convert((endValue as AnyObject).cgRectValue, from: view.window)
-//
-//            // Find out how much the keyboard overlaps the scroll view
-//            // We can do this because our scroll view's frame is already in our view's coordinate system
-//            let keyboardOverlap = scrollView.frame.maxY - endRect.origin.y
-//
-//            // Set the scroll view's content inset to avoid the keyboard
-//            // Don't forget the scroll indicator too!
-//            scrollView.contentInset.bottom = keyboardOverlap
-//            scrollView.scrollIndicatorInsets.bottom = keyboardOverlap
-//
-//            let duration = (durationValue as AnyObject).doubleValue
-//            let options = UIView.AnimationOptions(rawValue: UInt((curveValue as AnyObject).integerValue << 16))
-//            UIView.animate(withDuration: duration!, delay: 0, options: options, animations: {
-//                self.view.layoutIfNeeded()
-//            }, completion: nil)
-//        }
-//    }
-//
-//}
+
+//MARK:- Keyboard Handling
+
+
+extension MainVC{
+    
+    
+    
+    @objc fileprivate func keyboardWillShow(notification: Notification) {
+        if let keyFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRect = keyFrame.cgRectValue
+            keyboardHeight = keyboardRect.height-20
+            
+            
+            UIView.animate(withDuration: 0.1) {
+                self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight)
+            } completion: { (_) in }
+            tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50+self.keyboardHeight, right: 0)
+            //tableView.scrollToBottom(with: true)
+        
+        }
+    }
+    
+    
+    @objc fileprivate func keyboardWillHide(notification: Notification) {
+        
+        let durationKey = UIResponder.keyboardAnimationDurationUserInfoKey
+        let duration = notification.userInfo![durationKey] as! Double
+        let curveKey = UIResponder.keyboardAnimationCurveUserInfoKey
+        let curveValue = notification.userInfo![curveKey] as! Int
+
+        UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions.init(rawValue: UInt(curveValue))) {
+            self.bottomConteinerView.transform = .identity
+        } completion: { (_) in }
+        
+        tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50, right: 0)
+        
+    }
+}
 
 
 
-
+extension MainVC: ChatDelegate{
+    func didSelectImage(index: IndexPath) {
+        if messages[index.row].image != nil{
+            
+            let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
+            vc.modalPresentationStyle = .fullScreen
+            vc.img = messages[index.row].image!
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+}

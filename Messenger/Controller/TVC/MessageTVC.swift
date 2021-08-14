@@ -34,6 +34,7 @@ class MessageTVC: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        conteinerView.layer.cornerRadius = conteinerView.bounds.height * 0.15
         textLbl.textColor = .white
         timeLbl.textColor = .white
     }
@@ -45,7 +46,7 @@ class MessageTVC: UITableViewCell {
     }
     
     func updateCell(message: MessageData){
-        conteinerView.layer.cornerRadius = conteinerView.bounds.height * 0.15
+        
         conteinerView.clipsToBounds = true
         trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)

@@ -14,15 +14,21 @@ class FileTVC: UITableViewCell {
         return UINib(nibName: "FileTVC", bundle: nil)
     }
 
-    @IBOutlet weak var containerView: UIView!{
-        didSet{
-            containerView.layer.cornerRadius = 20
-            containerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
-        }
+    @IBOutlet weak var containerView: UIView!
+    var trailingConst : NSLayoutConstraint!
+    var leadingConst: NSLayoutConstraint!
+
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+//        leadingConst.isActive = false
+  //      trailingConst.isActive = false
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        containerView.layer.cornerRadius = 20
+        containerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
     }
 
     
