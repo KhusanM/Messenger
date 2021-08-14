@@ -24,7 +24,7 @@ struct MessageData {
     var text: String?
     var isFistUser: Bool
     var image: UIImage?
-    var file: String?
+    var fileName: String?
     var mediaType: MediaType?
 }
 
@@ -195,6 +195,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         }else {
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             
+            cell.updateCell(file: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
         }
@@ -262,34 +263,42 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
 
 extension MainVC: UIDocumentPickerDelegate{
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        self.messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: nil, file: "file", mediaType: nil))
+        
+        
+        if let filename = urls.first?.lastPathComponent {
+            self.messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: nil, fileName: filename, mediaType: nil))
+        }
+
         tableView.reloadData()
         tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
-        print(urls)
+        
+        
     }
     
+    func fileSize(forURL url: Any) -> Double {
+            var fileURL: URL?
+            var fileSize: Double = 0.0
+            if (url is URL) || (url is String)
+            {
+                if (url is URL) {
+                    fileURL = url as? URL
+                }
+                else {
+                    fileURL = URL(fileURLWithPath: url as! String)
+                }
+                var fileSizeValue = 0.0
+                try? fileSizeValue = (fileURL?.resourceValues(forKeys: [URLResourceKey.fileSizeKey]).allValues.first?.value as! Double?)!
+                if fileSizeValue > 0.0 {
+                    fileSize = (Double(fileSizeValue) / (1024 * 1024))
+                }
+            }
+            
+            return fileSize
+        }
     
-    //    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-    //            let newUrls = urls.compactMap { (url: URL) -> URL? in
-    //                // Create file URL to temporary folder
-    //                var tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-    //                // Apend filename (name+extension) to URL
-    //                tempURL.appendPathComponent(url.lastPathComponent)
-    //                do {
-    //                    // If file with same name exists remove it (replace file with new one)
-    //                    if FileManager.default.fileExists(atPath: tempURL.path) {
-    //                        try FileManager.default.removeItem(atPath: tempURL.path)
-    //                    }
-    //                    // Move file from app_id-Inbox to tmp/filename
-    //                    try FileManager.default.moveItem(atPath: url.path, toPath: tempURL.path)
-    //                    return tempURL
-    //                } catch {
-    //                    print(error.localizedDescription)
-    //                    return nil
-    //                }
-    //            }
-    //            // ... do something with URLs
-    //        }
+    
+    
+   
 }
 
 
@@ -297,20 +306,31 @@ extension MainVC: UIDocumentPickerDelegate{
 
 
 extension MainVC{
-    
-    
-    
+
     @objc fileprivate func keyboardWillShow(notification: Notification) {
         if let keyFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyFrame.cgRectValue
-            keyboardHeight = keyboardRect.height-20
+            keyboardHeight = keyboardRect.height
             
+            if UIScreen.main.bounds.height < 650{
+                print("kichkina")
+                UIView.animate(withDuration: 0.1) {
+                    self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight)
+                } completion: { (_) in }
+                tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50+self.keyboardHeight, right: 0)
+                //tableView.scrollToBottom(with: true)
+                
+            }else{
+                print("katta")
+                UIView.animate(withDuration: 0.1) {
+                    self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -(self.keyboardHeight-20))
+                } completion: { (_) in }
+                tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50+self.keyboardHeight, right: 0)
+                //tableView.scrollToBottom(with: true)
+                
+            }
             
-            UIView.animate(withDuration: 0.1) {
-                self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight)
-            } completion: { (_) in }
-            tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 50+self.keyboardHeight, right: 0)
-            //tableView.scrollToBottom(with: true)
+
         
         }
     }
@@ -333,7 +353,7 @@ extension MainVC{
 }
 
 
-
+// MARK:- Push To ImagePresentVC
 extension MainVC: ChatDelegate{
     func didSelectImage(index: IndexPath) {
         if messages[index.row].image != nil{

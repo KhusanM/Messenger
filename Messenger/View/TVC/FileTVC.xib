@@ -93,6 +93,9 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="containerView" destination="qxX-YM-cMe" id="rw6-lo-Hcb"/>
+                <outlet property="fileNameLbl" destination="yI5-S0-QsX" id="cD4-hM-evr"/>
+                <outlet property="fileSizeLbl" destination="Jx5-nv-flt" id="Op4-4g-Tf7"/>
+                <outlet property="timeLbl" destination="RcD-SX-q6h" id="jaW-Iw-VKI"/>
             </connections>
             <point key="canvasLocation" x="-3.6231884057971016" y="8.7053571428571423"/>
         </tableViewCell>
