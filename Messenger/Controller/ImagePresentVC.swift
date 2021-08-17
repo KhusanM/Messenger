@@ -28,10 +28,24 @@ class ImagePresentVC: UIViewController {
         scrollView.delegate = self
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.bouncesZoom = true
+        
         
         let doubleTapGest = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
         doubleTapGest.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTapGest)
+        
+        let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
+        
+        navigationItem.rightBarButtonItem = shareBtn
+    }
+    
+    @objc func shareBtnTapped() {
+        
+        let data = [img] as [Any]
+        let vc = UIActivityViewController(activityItems: data, applicationActivities: nil)
+        
+        present(vc, animated: true, completion: nil)
     }
 
     @objc func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {

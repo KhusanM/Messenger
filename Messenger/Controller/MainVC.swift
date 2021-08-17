@@ -11,6 +11,7 @@ import MobileCoreServices
 
 protocol ChatDelegate {
     func didSelectImage(index: IndexPath)
+    func didSelectDocument(index: IndexPath)
 }
 
 struct MessageData {
@@ -24,7 +25,10 @@ struct MessageData {
     var text: String?
     var isFistUser: Bool
     var image: UIImage?
-    var fileName: String?
+    
+    var documentName: String?
+    var documentURL: URL?
+    var documentSize: String?
     var mediaType: MediaType?
 }
 
@@ -75,6 +79,9 @@ class MainVC: UIViewController {
         super.viewDidLoad()
         tapGesture()
         navigationItem.title = "Chat"
+        
+        
+       
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -194,7 +201,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
             
         }else {
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
-            
+            cell.index = indexPath
+            cell.delegate = self
             cell.updateCell(file: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
@@ -260,41 +268,23 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
     
 }
 
+//MARK:- Document
 
 extension MainVC: UIDocumentPickerDelegate{
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         
+        guard let myURL = urls.first else {return}
         
-        if let filename = urls.first?.lastPathComponent {
-            self.messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: nil, fileName: filename, mediaType: nil))
-        }
+        guard let filename = urls.first?.lastPathComponent else{ return}
 
+        self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL,documentSize: "\(myURL.fileSizeString)"))
+        
+        
         tableView.reloadData()
         tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
         
-        
     }
     
-    func fileSize(forURL url: Any) -> Double {
-            var fileURL: URL?
-            var fileSize: Double = 0.0
-            if (url is URL) || (url is String)
-            {
-                if (url is URL) {
-                    fileURL = url as? URL
-                }
-                else {
-                    fileURL = URL(fileURLWithPath: url as! String)
-                }
-                var fileSizeValue = 0.0
-                try? fileSizeValue = (fileURL?.resourceValues(forKeys: [URLResourceKey.fileSizeKey]).allValues.first?.value as! Double?)!
-                if fileSizeValue > 0.0 {
-                    fileSize = (Double(fileSizeValue) / (1024 * 1024))
-                }
-            }
-            
-            return fileSize
-        }
     
     
     
@@ -312,7 +302,7 @@ extension MainVC{
             let keyboardRect = keyFrame.cgRectValue
             keyboardHeight = keyboardRect.height
             
-            if UIScreen.main.bounds.height < 650{
+            if UIScreen.main.bounds.height < 670{
                 print("kichkina")
                 UIView.animate(withDuration: 0.1) {
                     self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight)
@@ -335,7 +325,6 @@ extension MainVC{
         }
     }
     
-    
     @objc fileprivate func keyboardWillHide(notification: Notification) {
         
         let durationKey = UIResponder.keyboardAnimationDurationUserInfoKey
@@ -355,6 +344,16 @@ extension MainVC{
 
 // MARK:- Push To ImagePresentVC
 extension MainVC: ChatDelegate{
+    func didSelectDocument(index: IndexPath) {
+       
+            
+            let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
+            vc.modalPresentationStyle = .fullScreen
+            vc.url = messages[index.row].documentURL
+            navigationController?.pushViewController(vc, animated: true)
+        
+    }
+    
     func didSelectImage(index: IndexPath) {
         if messages[index.row].image != nil{
             

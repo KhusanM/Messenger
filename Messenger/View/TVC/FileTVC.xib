@@ -29,17 +29,20 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nci-UP-yGU">
                                                 <rect key="frame" x="0.0" y="0.0" width="42" height="61"/>
                                                 <state key="normal" image="file"/>
+                                                <connections>
+                                                    <action selector="fileBtnTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="maA-Ng-F8L"/>
+                                                </connections>
                                             </button>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="irC-4V-sB5">
                                                 <rect key="frame" x="57" y="0.0" width="72" height="61"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="File.name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yI5-S0-QsX">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File.name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yI5-S0-QsX">
                                                         <rect key="frame" x="0.0" y="0.0" width="72" height="38"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8,7 KB" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx5-nv-flt">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="8,7 KB" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx5-nv-flt">
                                                         <rect key="frame" x="0.0" y="44" width="42" height="17"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <color key="textColor" systemColor="systemGrayColor"/>
@@ -83,7 +86,7 @@
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="qxX-YM-cMe" firstAttribute="width" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="0.5" id="0kb-Cl-eii"/>
+                    <constraint firstItem="qxX-YM-cMe" firstAttribute="width" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="0.7" id="0kb-Cl-eii"/>
                     <constraint firstAttribute="trailing" secondItem="qxX-YM-cMe" secondAttribute="trailing" constant="10" placeholder="YES" id="D0R-yi-9Sp"/>
                     <constraint firstItem="qxX-YM-cMe" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="GCC-zI-0uA"/>
                     <constraint firstAttribute="bottom" secondItem="qxX-YM-cMe" secondAttribute="bottom" constant="5" id="cuR-48-TtI"/>

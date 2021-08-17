@@ -21,7 +21,8 @@ class FileTVC: UITableViewCell {
     
     var trailingConst : NSLayoutConstraint!
     var leadingConst: NSLayoutConstraint!
-
+    var index: IndexPath!
+    var delegate: ChatDelegate?
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -51,7 +52,13 @@ class FileTVC: UITableViewCell {
         }
         
         
-        fileNameLbl.text = file.fileName
+        fileNameLbl.text = file.documentName
+        fileSizeLbl.text = file.documentSize
+    }
+    
+    @IBAction func fileBtnTapped(_ sender: Any) {
+        delegate?.didSelectDocument(index: index)
+        
     }
     
     

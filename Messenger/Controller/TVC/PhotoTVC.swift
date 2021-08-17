@@ -21,6 +21,9 @@ class PhotoTVC: UITableViewCell {
     @IBOutlet weak var conteinerView: UIView!
     @IBOutlet weak var backGroundPhoto: UIImageView!
     @IBOutlet weak var imgView: UIImageView!
+    @IBOutlet weak var timerView: TimerView!
+    
+    
     
     var context = CIContext(options: nil)
 
@@ -30,6 +33,7 @@ class PhotoTVC: UITableViewCell {
 
     var delegate: ChatDelegate?
     var index : IndexPath!
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -42,7 +46,9 @@ class PhotoTVC: UITableViewCell {
         super.awakeFromNib()
         
         conteinerView.layer.cornerRadius = 20
-        //conteinerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
+        
+        
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -65,11 +71,21 @@ class PhotoTVC: UITableViewCell {
         let output = cropFilter!.outputImage
         let cgimg = context.createCGImage(output!, from: output!.extent)
         let processedImage = UIImage(cgImage: cgimg!)
+        
+        
         backGroundPhoto.image = processedImage
     }
     
     
+    
     func updadeCell(with: MessageData){
+        
+        
+            timerView.createCircularPath(radius: 30, lineWidth: 3, bgLineColor: .clear, progressColor: .white, firstDuration: 3)
+            timerView.progressAnimation()
+        
+        
+        
         
         trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
@@ -86,11 +102,14 @@ class PhotoTVC: UITableViewCell {
         backGroundPhoto.image = with.image
         imgView.image = with.image
         blurEffect()
+        
+        
     }
     
     @IBAction func didSelectBtnTapped(_ sender: UIButton) {
         delegate?.didSelectImage(index: index)
     }
     
-    
 }
+
+

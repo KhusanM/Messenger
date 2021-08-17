@@ -26,6 +26,14 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo" translatesAutoresizingMaskIntoConstraints="NO" id="ndh-sR-vsh">
                                 <rect key="frame" x="0.0" y="0.0" width="224" height="200"/>
                             </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l2W-P8-F8I" customClass="TimerView" customModule="Messenger" customModuleProvider="target">
+                                <rect key="frame" x="77" y="65" width="70" height="70"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="l2W-P8-F8I" secondAttribute="height" id="IMm-JB-6pz"/>
+                                    <constraint firstAttribute="width" constant="70" id="WUe-rz-1S9"/>
+                                </constraints>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4ot-FO-ipG">
                                 <rect key="frame" x="0.0" y="0.0" width="224" height="200"/>
                                 <connections>
@@ -44,8 +52,10 @@
                             <constraint firstAttribute="trailing" secondItem="2mb-ea-ACg" secondAttribute="trailing" id="dCz-nN-qk5"/>
                             <constraint firstItem="4ot-FO-ipG" firstAttribute="leading" secondItem="ZgU-Cr-n4u" secondAttribute="leading" id="e1R-G3-hVs"/>
                             <constraint firstAttribute="trailing" secondItem="4ot-FO-ipG" secondAttribute="trailing" id="fCT-Cu-jWw"/>
+                            <constraint firstItem="l2W-P8-F8I" firstAttribute="centerY" secondItem="ZgU-Cr-n4u" secondAttribute="centerY" id="kb8-mD-VNJ"/>
                             <constraint firstItem="2mb-ea-ACg" firstAttribute="top" secondItem="ZgU-Cr-n4u" secondAttribute="top" id="ldy-aB-O2Z"/>
                             <constraint firstAttribute="bottom" secondItem="4ot-FO-ipG" secondAttribute="bottom" id="luB-Cq-HIp"/>
+                            <constraint firstItem="l2W-P8-F8I" firstAttribute="centerX" secondItem="ZgU-Cr-n4u" secondAttribute="centerX" id="m07-aS-85X"/>
                             <constraint firstAttribute="bottom" secondItem="2mb-ea-ACg" secondAttribute="bottom" id="ogz-hl-wSr"/>
                             <constraint firstItem="ndh-sR-vsh" firstAttribute="leading" secondItem="ZgU-Cr-n4u" secondAttribute="leading" id="zGr-ia-fYi"/>
                         </constraints>
@@ -64,6 +74,7 @@
                 <outlet property="backGroundPhoto" destination="2mb-ea-ACg" id="ibK-mY-tPP"/>
                 <outlet property="conteinerView" destination="ZgU-Cr-n4u" id="gf9-7P-AVg"/>
                 <outlet property="imgView" destination="ndh-sR-vsh" id="OVg-3Z-3qU"/>
+                <outlet property="timerView" destination="l2W-P8-F8I" id="FcF-gu-IP2"/>
             </connections>
             <point key="canvasLocation" x="100.00000000000001" y="140.625"/>
         </tableViewCell>

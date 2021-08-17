@@ -14,6 +14,10 @@
 		D025845726C3FFB400150352 /* FileTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D025845626C3FFB400150352 /* FileTVC.swift */; };
 		D025845926C3FFC600150352 /* FileTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845826C3FFC600150352 /* FileTVC.xib */; };
 		D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D025845E26C5232E00150352 /* GoogleService-Info.plist */; };
+		D05E466226CB87BD00C98D5B /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466126CB87BD00C98D5B /* TimerView.swift */; };
+		D05E466B26CBA40900C98D5B /* DocumentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466926CBA40900C98D5B /* DocumentVC.swift */; };
+		D05E466C26CBA40900C98D5B /* DocumentVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D05E466A26CBA40900C98D5B /* DocumentVC.xib */; };
+		D05E466E26CBC3B200C98D5B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466D26CBC3B200C98D5B /* Extensions.swift */; };
 		D0A07CC126C7985500BB9463 /* ImagePresentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A07CBF26C7985500BB9463 /* ImagePresentVC.swift */; };
 		D0A07CC226C7985500BB9463 /* ImagePresentVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0A07CC026C7985500BB9463 /* ImagePresentVC.xib */; };
 		D0EAA96F26C26CD000256412 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EAA96E26C26CD000256412 /* AppDelegate.swift */; };
@@ -31,6 +35,10 @@
 		D025845626C3FFB400150352 /* FileTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileTVC.swift; sourceTree = "<group>"; };
 		D025845826C3FFC600150352 /* FileTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileTVC.xib; sourceTree = "<group>"; };
 		D025845E26C5232E00150352 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D05E466126CB87BD00C98D5B /* TimerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		D05E466926CBA40900C98D5B /* DocumentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentVC.swift; sourceTree = "<group>"; };
+		D05E466A26CBA40900C98D5B /* DocumentVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DocumentVC.xib; sourceTree = "<group>"; };
+		D05E466D26CBC3B200C98D5B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D0A07CBF26C7985500BB9463 /* ImagePresentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePresentVC.swift; sourceTree = "<group>"; };
 		D0A07CC026C7985500BB9463 /* ImagePresentVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagePresentVC.xib; sourceTree = "<group>"; };
 		D0EAA96B26C26CD000256412 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +125,7 @@
 				D025845026C3973E00150352 /* TVC */,
 				D0EAA98326C270B000256412 /* MainVC.xib */,
 				D0A07CC026C7985500BB9463 /* ImagePresentVC.xib */,
+				D05E466A26CBA40900C98D5B /* DocumentVC.xib */,
 				D0EAA97926C26CD800256412 /* LaunchScreen.storyboard */,
 			);
 			path = View;
@@ -128,6 +137,7 @@
 				D025845126C3975300150352 /* TVC */,
 				D0EAA98226C270B000256412 /* MainVC.swift */,
 				D0A07CBF26C7985500BB9463 /* ImagePresentVC.swift */,
+				D05E466926CBA40900C98D5B /* DocumentVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -135,6 +145,8 @@
 		D0EAA98926C270D400256412 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D05E466126CB87BD00C98D5B /* TimerView.swift */,
+				D05E466D26CBC3B200C98D5B /* Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -201,6 +213,7 @@
 				D025845526C3E7BA00150352 /* PhotoTVC.xib in Resources */,
 				D025844F26C3971200150352 /* MessageTVC.xib in Resources */,
 				D025845926C3FFC600150352 /* FileTVC.xib in Resources */,
+				D05E466C26CBA40900C98D5B /* DocumentVC.xib in Resources */,
 				D0EAA97B26C26CD800256412 /* LaunchScreen.storyboard in Resources */,
 				D0EAA97826C26CD800256412 /* Assets.xcassets in Resources */,
 				D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */,
@@ -214,8 +227,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D05E466226CB87BD00C98D5B /* TimerView.swift in Sources */,
+				D05E466E26CBC3B200C98D5B /* Extensions.swift in Sources */,
 				D0A07CC126C7985500BB9463 /* ImagePresentVC.swift in Sources */,
 				D025845726C3FFB400150352 /* FileTVC.swift in Sources */,
+				D05E466B26CBA40900C98D5B /* DocumentVC.swift in Sources */,
 				D025845426C3E7BA00150352 /* PhotoTVC.swift in Sources */,
 				D025844E26C3971200150352 /* MessageTVC.swift in Sources */,
 				D0EAA96F26C26CD000256412 /* AppDelegate.swift in Sources */,
