@@ -27,7 +27,6 @@ class DocumentVC: UIViewController ,WKNavigationDelegate{
     
     @objc func shareBtnTapped() {
         
-        
         let data = [url!] as [Any]
         let vc = UIActivityViewController(activityItems: data, applicationActivities: nil)
         

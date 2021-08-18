@@ -18,11 +18,17 @@ class FileTVC: UITableViewCell {
     @IBOutlet weak var fileNameLbl: UILabel!
     @IBOutlet weak var fileSizeLbl: UILabel!
     @IBOutlet weak var timeLbl: UILabel!
+    @IBOutlet weak var downloadImg: UIImageView!
+    @IBOutlet weak var timerView: TimerView!
+    
+    @IBOutlet weak var fileImg: UIImageView!
+    
     
     var trailingConst : NSLayoutConstraint!
     var leadingConst: NSLayoutConstraint!
     var index: IndexPath!
     var delegate: ChatDelegate?
+    var didSelect = false
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -33,9 +39,13 @@ class FileTVC: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         containerView.layer.cornerRadius = 20
-        //containerView.layer.maskedCorners = [ .layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner]
+        
     }
-
+    
+    func reloadView(){
+        timerView.createCircularPath(radius: 30, lineWidth: 3, bgLineColor: .clear,progressColor: .gray, firstDuration: 3)
+        timerView.progressAnimation()
+    }
     
     func updateCell(file: MessageData){
         
@@ -57,7 +67,17 @@ class FileTVC: UITableViewCell {
     }
     
     @IBAction func fileBtnTapped(_ sender: Any) {
-        delegate?.didSelectDocument(index: index)
+        if !didSelect{
+            downloadImg.isHidden = true
+            reloadView()
+            didSelect = true
+            Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
+                self.fileImg.isHidden = false
+            }
+        }else{
+            delegate?.didSelectDocument(index: index)
+        }
+        
         
     }
     

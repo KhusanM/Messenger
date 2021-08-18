@@ -19,10 +19,7 @@ class TimerView: UIView {
     private var count = 0
     private var duration = 60
     
-    
-    
-    
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -59,20 +56,7 @@ class TimerView: UIView {
         duration = firstDuration
         
         
-//        animationView.animation = Animation.named("reload")
-//        self.addSubview(animationView)
-//        animationView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        animationView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-//        animationView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-//        animationView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-//        animationView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-//
-//        animationView.animationSpeed = 0.5
-//        animationView.loopMode = .playOnce
-//        animationView.isHidden = true
-//
-        
+
         
     }
     
@@ -86,21 +70,14 @@ class TimerView: UIView {
         circularProgressAnimation.isRemovedOnCompletion = true
         progressLayer.add(circularProgressAnimation, forKey: "progressAnim")
         
-       
-        
         count = duration
         
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [self] timer in
             if count == 0 {
-               
                 timer.invalidate()
-                
-                
-                
             } else {
                 count -= 1
             }
-            
         }
     }
 }

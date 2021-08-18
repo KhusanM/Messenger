@@ -16,8 +16,7 @@ class ImagePresentVC: UIViewController {
     
     var img = UIImage()
     
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         imgView.image = img
@@ -30,11 +29,18 @@ class ImagePresentVC: UIViewController {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.bouncesZoom = true
         
+        doubleTap()
+        shareBtn()
         
+    }
+    
+    private func doubleTap(){
         let doubleTapGest = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
         doubleTapGest.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTapGest)
-        
+    }
+    
+    private func shareBtn(){
         let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
         
         navigationItem.rightBarButtonItem = shareBtn
@@ -70,6 +76,7 @@ class ImagePresentVC: UIViewController {
     
 
 }
+
 extension ImagePresentVC: UIScrollViewDelegate{
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imgView

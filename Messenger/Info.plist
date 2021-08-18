@@ -4,6 +4,14 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+		</dict>
+		<dict/>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -41,5 +49,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Need microphone access for uploading videos</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Need camera access for uploading images</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Need location access for updating nearby friends</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app will use your location to show cool stuffs near you.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Need photo library access for uploading images</string>
+ 
+        
 </dict>
 </plist>

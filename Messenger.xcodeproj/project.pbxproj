@@ -14,12 +14,17 @@
 		D025845726C3FFB400150352 /* FileTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D025845626C3FFB400150352 /* FileTVC.swift */; };
 		D025845926C3FFC600150352 /* FileTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845826C3FFC600150352 /* FileTVC.xib */; };
 		D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D025845E26C5232E00150352 /* GoogleService-Info.plist */; };
+		D02EAA4426CBCABF00CCD490 /* AudioTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D02EAA4226CBCABE00CCD490 /* AudioTVC.xib */; };
+		D02EAA4526CBCABF00CCD490 /* AudioTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EAA4326CBCABF00CCD490 /* AudioTVC.swift */; };
+		D02EAA4726CBCBA800CCD490 /* PulseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EAA4626CBCBA800CCD490 /* PulseButton.swift */; };
 		D05E466226CB87BD00C98D5B /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466126CB87BD00C98D5B /* TimerView.swift */; };
 		D05E466B26CBA40900C98D5B /* DocumentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466926CBA40900C98D5B /* DocumentVC.swift */; };
 		D05E466C26CBA40900C98D5B /* DocumentVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D05E466A26CBA40900C98D5B /* DocumentVC.xib */; };
 		D05E466E26CBC3B200C98D5B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466D26CBC3B200C98D5B /* Extensions.swift */; };
 		D0A07CC126C7985500BB9463 /* ImagePresentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A07CBF26C7985500BB9463 /* ImagePresentVC.swift */; };
 		D0A07CC226C7985500BB9463 /* ImagePresentVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0A07CC026C7985500BB9463 /* ImagePresentVC.xib */; };
+		D0DC7E5526CCD1C10037F761 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0DC7E5426CCD1C10037F761 /* CloudKit.framework */; };
+		D0DC7E5726CCF5CD0037F761 /* RecordBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0DC7E5626CCF5CD0037F761 /* RecordBtn.swift */; };
 		D0EAA96F26C26CD000256412 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EAA96E26C26CD000256412 /* AppDelegate.swift */; };
 		D0EAA97826C26CD800256412 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0EAA97726C26CD800256412 /* Assets.xcassets */; };
 		D0EAA97B26C26CD800256412 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0EAA97926C26CD800256412 /* LaunchScreen.storyboard */; };
@@ -35,12 +40,17 @@
 		D025845626C3FFB400150352 /* FileTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileTVC.swift; sourceTree = "<group>"; };
 		D025845826C3FFC600150352 /* FileTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileTVC.xib; sourceTree = "<group>"; };
 		D025845E26C5232E00150352 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D02EAA4226CBCABE00CCD490 /* AudioTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioTVC.xib; sourceTree = "<group>"; };
+		D02EAA4326CBCABF00CCD490 /* AudioTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioTVC.swift; sourceTree = "<group>"; };
+		D02EAA4626CBCBA800CCD490 /* PulseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PulseButton.swift; sourceTree = "<group>"; };
 		D05E466126CB87BD00C98D5B /* TimerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		D05E466926CBA40900C98D5B /* DocumentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentVC.swift; sourceTree = "<group>"; };
 		D05E466A26CBA40900C98D5B /* DocumentVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DocumentVC.xib; sourceTree = "<group>"; };
 		D05E466D26CBC3B200C98D5B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D0A07CBF26C7985500BB9463 /* ImagePresentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePresentVC.swift; sourceTree = "<group>"; };
 		D0A07CC026C7985500BB9463 /* ImagePresentVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagePresentVC.xib; sourceTree = "<group>"; };
+		D0DC7E5426CCD1C10037F761 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		D0DC7E5626CCF5CD0037F761 /* RecordBtn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordBtn.swift; sourceTree = "<group>"; };
 		D0EAA96B26C26CD000256412 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0EAA96E26C26CD000256412 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0EAA97726C26CD800256412 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -55,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0DC7E5526CCD1C10037F761 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +78,7 @@
 				D025844D26C3971200150352 /* MessageTVC.xib */,
 				D025845326C3E7BA00150352 /* PhotoTVC.xib */,
 				D025845826C3FFC600150352 /* FileTVC.xib */,
+				D02EAA4226CBCABE00CCD490 /* AudioTVC.xib */,
 			);
 			path = TVC;
 			sourceTree = "<group>";
@@ -77,8 +89,17 @@
 				D025844C26C3971200150352 /* MessageTVC.swift */,
 				D025845226C3E7BA00150352 /* PhotoTVC.swift */,
 				D025845626C3FFB400150352 /* FileTVC.swift */,
+				D02EAA4326CBCABF00CCD490 /* AudioTVC.swift */,
 			);
 			path = TVC;
+			sourceTree = "<group>";
+		};
+		D0DC7E5326CCD1C10037F761 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D0DC7E5426CCD1C10037F761 /* CloudKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		D0EAA96226C26CD000256412 = {
@@ -86,6 +107,7 @@
 			children = (
 				D0EAA96D26C26CD000256412 /* Messenger */,
 				D0EAA96C26C26CD000256412 /* Products */,
+				D0DC7E5326CCD1C10037F761 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +169,8 @@
 			children = (
 				D05E466126CB87BD00C98D5B /* TimerView.swift */,
 				D05E466D26CBC3B200C98D5B /* Extensions.swift */,
+				D02EAA4626CBCBA800CCD490 /* PulseButton.swift */,
+				D0DC7E5626CCF5CD0037F761 /* RecordBtn.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -210,6 +234,7 @@
 			files = (
 				D0A07CC226C7985500BB9463 /* ImagePresentVC.xib in Resources */,
 				D0EAA98526C270B000256412 /* MainVC.xib in Resources */,
+				D02EAA4426CBCABF00CCD490 /* AudioTVC.xib in Resources */,
 				D025845526C3E7BA00150352 /* PhotoTVC.xib in Resources */,
 				D025844F26C3971200150352 /* MessageTVC.xib in Resources */,
 				D025845926C3FFC600150352 /* FileTVC.xib in Resources */,
@@ -231,6 +256,9 @@
 				D05E466E26CBC3B200C98D5B /* Extensions.swift in Sources */,
 				D0A07CC126C7985500BB9463 /* ImagePresentVC.swift in Sources */,
 				D025845726C3FFB400150352 /* FileTVC.swift in Sources */,
+				D02EAA4526CBCABF00CCD490 /* AudioTVC.swift in Sources */,
+				D0DC7E5726CCF5CD0037F761 /* RecordBtn.swift in Sources */,
+				D02EAA4726CBCBA800CCD490 /* PulseButton.swift in Sources */,
 				D05E466B26CBA40900C98D5B /* DocumentVC.swift in Sources */,
 				D025845426C3E7BA00150352 /* PhotoTVC.swift in Sources */,
 				D025844E26C3971200150352 /* MessageTVC.swift in Sources */,
@@ -374,6 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Messenger/Messenger.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U23784U7DD;
 				INFOPLIST_FILE = Messenger/Info.plist;
@@ -393,6 +422,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Messenger/Messenger.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U23784U7DD;
 				INFOPLIST_FILE = Messenger/Info.plist;

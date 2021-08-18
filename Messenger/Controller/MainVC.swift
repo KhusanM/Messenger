@@ -7,6 +7,9 @@
 
 import UIKit
 import MobileCoreServices
+import AVFoundation
+import CloudKit
+
 
 
 protocol ChatDelegate {
@@ -30,6 +33,8 @@ struct MessageData {
     var documentURL: URL?
     var documentSize: String?
     var mediaType: MediaType?
+    
+    var audiFiles: String?
 }
 
 
@@ -44,10 +49,15 @@ class MainVC: UIViewController {
             tableView.register(MessageTVC.unib(), forCellReuseIdentifier: MessageTVC.identifier)
             tableView.register(PhotoTVC.unib(), forCellReuseIdentifier: PhotoTVC.identifier)
             tableView.register(FileTVC.unib(), forCellReuseIdentifier: FileTVC.identifier)
+            tableView.register(AudioTVC.unib(), forCellReuseIdentifier: AudioTVC.identifair)
         }
     }
     
-    @IBOutlet weak var sendBtn: UIButton!
+    @IBOutlet weak var sendBtn: RecordBtn!{
+        didSet{
+            sendBtn.delegate = self
+        }
+    }
     
     @IBOutlet weak var textView: UITextView!{
         didSet{
@@ -66,7 +76,7 @@ class MainVC: UIViewController {
         }
     }
     
-   // var imagePicker = UIImagePickerController()
+   
     var isMicraphone = true
     var messages: [MessageData] = []
     
@@ -75,35 +85,38 @@ class MainVC: UIViewController {
     
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tapGesture()
+        
+
+        keyboardHandling()
         navigationItem.title = "Chat"
-        
-        
-       
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        sendBtn.layer.cornerRadius = 15
+
         
     }
     
+    private func tableViewReload(){
+        tableView.beginUpdates()
+        tableView.insertRows(at: [IndexPath.init(row: messages.count - 1, section: 0)], with: .fade)
+        tableView.endUpdates()
+        tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+    }
     
-    private func tapGesture(){
+    private func keyboardHandling(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @objc func dismissKeyboard(){
         self.view.endEditing(true)
     }
     
-//    func scrollToBottom(){
-//        DispatchQueue.main.async {
-//            let indexPath = IndexPath(row: self.messages.count-1, section: 0)
-//            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-//        }
-//    }
     
     func openFilePicker() {
         let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
@@ -112,6 +125,7 @@ class MainVC: UIViewController {
         self.present(documentPicker,animated: true,completion: nil)
     }
     
+
     
     @IBAction func leftBtnTapped(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -126,8 +140,6 @@ class MainVC: UIViewController {
             
             self.present(vc, animated: true, completion: nil)
         }
-        
-        
         
         let file = UIAlertAction(title: "File", style: .default) { [self] _ in
             openFilePicker()
@@ -145,13 +157,10 @@ class MainVC: UIViewController {
     
     @IBAction func sendBtnTapped(_ sender: Any) {
         
-        if !textView.text!.isEmpty && !isMicraphone{
+        if !textView.text!.isEmpty && !isMicraphone {
             messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
             
-            tableView.beginUpdates()
-            tableView.insertRows(at: [IndexPath.init(row: messages.count - 1, section: 0)], with: .fade)
-            tableView.endUpdates()
-            tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+            tableViewReload()
             isFirstUser = !isFirstUser
             textView.text.removeAll()
         }else{
@@ -199,19 +208,26 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
             
             return cell
             
-        }else {
+        }else if messages[indexPath.row].documentURL != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             cell.index = indexPath
             cell.delegate = self
             cell.updateCell(file: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
+        }else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: AudioTVC.identifair, for: indexPath) as! AudioTVC
+            cell.index = indexPath
+            
+            cell.updateCell(ar: messages[indexPath.row])
+            
+            cell.selectionStyle = .none
+            return cell
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        
+
     }
 }
 
@@ -257,8 +273,7 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
             let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
             
             messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
-            tableView.reloadData()
-            tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+            tableViewReload()
             isFirstUser = !isFirstUser
         default:
             break
@@ -280,14 +295,9 @@ extension MainVC: UIDocumentPickerDelegate{
         self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL,documentSize: "\(myURL.fileSizeString)"))
         
         
-        tableView.reloadData()
-        tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+        tableViewReload()
         
     }
-    
-    
-    
-    
    
 }
 
@@ -303,7 +313,7 @@ extension MainVC{
             keyboardHeight = keyboardRect.height
             
             if UIScreen.main.bounds.height < 670{
-                print("kichkina")
+                
                 UIView.animate(withDuration: 0.1) {
                     self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight)
                 } completion: { (_) in }
@@ -311,7 +321,7 @@ extension MainVC{
                 //tableView.scrollToBottom(with: true)
                 
             }else{
-                print("katta")
+                
                 UIView.animate(withDuration: 0.1) {
                     self.bottomConteinerView.transform = CGAffineTransform(translationX: 0, y: -(self.keyboardHeight-20))
                 } completion: { (_) in }
@@ -320,8 +330,6 @@ extension MainVC{
                 
             }
             
-
-        
         }
     }
     
@@ -342,15 +350,16 @@ extension MainVC{
 }
 
 
-// MARK:- Push To ImagePresentVC
+// MARK:- Push To ImagePresentVC And File
+
 extension MainVC: ChatDelegate{
+    
     func didSelectDocument(index: IndexPath) {
-       
-            
-            let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
-            vc.modalPresentationStyle = .fullScreen
-            vc.url = messages[index.row].documentURL
-            navigationController?.pushViewController(vc, animated: true)
+        
+        let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
+        vc.modalPresentationStyle = .fullScreen
+        vc.url = messages[index.row].documentURL
+        navigationController?.pushViewController(vc, animated: true)
         
     }
     
@@ -363,4 +372,16 @@ extension MainVC: ChatDelegate{
             navigationController?.pushViewController(vc, animated: true)
         }
     }
+}
+
+
+extension MainVC: RecordBtnDelegate{
+    func getUrl(url: String) {
+        
+        messages.append(MessageData(isFistUser: isFirstUser, audiFiles: url))
+        
+        tableViewReload()
+    }
+    
+    
 }
