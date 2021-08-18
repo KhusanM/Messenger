@@ -288,9 +288,51 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
 extension MainVC: UIDocumentPickerDelegate{
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         
+               
         guard let myURL = urls.first else {return}
         
         guard let filename = urls.first?.lastPathComponent else{ return}
+
+        
+        // Start accessing a security-scoped resource.
+        guard myURL.startAccessingSecurityScopedResource() else {
+            // Handle the failure here.
+            return
+        }
+        
+        // Make sure you release the security-scoped resource when you finish.
+        defer { myURL.stopAccessingSecurityScopedResource() }
+        
+        // Use file coordination for reading and writing any of the URL’s content.
+        var error: NSError? = nil
+        NSFileCoordinator().coordinate(readingItemAt: myURL, error: &error) { (url) in
+            
+            let keys : [URLResourceKey] = [.nameKey, .isDirectoryKey]
+            
+            // Get an enumerator for the directory's content.
+            guard let fileList =
+                    FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
+                Swift.debugPrint("*** Unable to access the contents of \(url.path) ***\n")
+                return
+            }
+            
+            for case let file as URL in fileList {
+                // Start accessing the content's security-scoped URL.
+                guard url.startAccessingSecurityScopedResource() else {
+                    // Handle the failure here.
+                    continue
+                }
+                
+                // Do something with the file here.
+                Swift.debugPrint("chosen file: \(file.lastPathComponent)")
+                
+                // Make sure you release the security-scoped resource when you finish.
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        
+
 
         self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL,documentSize: "\(myURL.fileSizeString)"))
         
@@ -308,6 +350,7 @@ extension MainVC: UIDocumentPickerDelegate{
 extension MainVC{
 
     @objc fileprivate func keyboardWillShow(notification: Notification) {
+        
         if let keyFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyFrame.cgRectValue
             keyboardHeight = keyboardRect.height
@@ -377,7 +420,7 @@ extension MainVC: ChatDelegate{
 
 extension MainVC: RecordBtnDelegate{
     func getUrl(url: String) {
-        
+//        print(url)
         messages.append(MessageData(isFistUser: isFirstUser, audiFiles: url))
         
         tableViewReload()

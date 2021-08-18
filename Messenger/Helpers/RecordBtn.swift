@@ -21,8 +21,10 @@ class RecordBtn: UIButton {
     
     var delegate: RecordBtnDelegate?
     var fileName: String?
-    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
    
+    var engine = AVAudioEngine()
+    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("test.caf")
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +32,8 @@ class RecordBtn: UIButton {
         setUpRecorder()
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
                        self.addGestureRecognizer(longPress)
+        
+        engineFunc()
     }
     
     required init?(coder: NSCoder) {
@@ -38,13 +42,36 @@ class RecordBtn: UIButton {
         setUpRecorder()
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
                        self.addGestureRecognizer(longPress)
+        
+        engineFunc()
+    }
+    
+    func engineFunc(){
+        let file: AVAudioFile
+                do {
+                    file = try AVAudioFile(forWriting: url, settings: engine.inputNode.outputFormat(forBus: 0).settings)
+                } catch {
+                    print("Error: \(error)")
+                    return
+                }
+        
+
+        engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: engine.inputNode.outputFormat(forBus: 0)) { (buffer, time) -> Void in
+                    do {
+                        try file.write(from: buffer)
+                    } catch {
+                        print("Error: \(error)")
+                    }
+                }
     }
     
     @objc  func longPress(gesture: UILongPressGestureRecognizer) {
+        feedbackGenerator.impactOccurred()
         if gesture.state == UIGestureRecognizer.State.began {
             
-            setUpRecorder()
             feedbackGenerator.impactOccurred()
+            setUpRecorder()
+            
             self.addSubview(view)
             time = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [self] _ in
                 self.backgroundColor = .systemGreen
@@ -69,6 +96,17 @@ class RecordBtn: UIButton {
                 
             })
             audioRecorder.record()
+            //ENgine
+            do {
+                // Start engine
+                try engine.start()
+                
+                // Toggle button title
+                
+            } catch {
+                print("Error: \(error)")
+            }
+            
             
         }else if gesture.state == UIGestureRecognizer.State.ended {
             
@@ -76,11 +114,12 @@ class RecordBtn: UIButton {
             
             self.transform = .identity
 
-            //self.setImage(UIImage(systemName: "mic"), for: .normal)
+            
             self.tintColor = .darkGray
             time?.invalidate()
             view.removeFromSuperview()
             audioRecorder.stop()
+            engine.stop()
 
         }
       }
@@ -123,6 +162,7 @@ extension RecordBtn: AVAudioRecorderDelegate {
     }
     
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        
         if flag {
             delegate?.getUrl(url: recorder.url.absoluteString)
         }

@@ -48,6 +48,7 @@ class AudioTVC: UITableViewCell {
             timeSlider = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime(_:)), userInfo: nil, repeats: true)
             timeLbl = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime1), userInfo: nil, repeats: true)
         }else {
+            playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
             timeLbl?.invalidate()
             timeSlider?.invalidate()
             audioPlayer.stop()
@@ -76,17 +77,26 @@ extension AudioTVC: AVAudioPlayerDelegate  {
         return paths[0]
     }
 
-func setUpPlayer() {
-    
-    let audioFileName = fetchingDocumentDirectory().appendingPathComponent(String(fileTit.suffix(40)))
-    
-    do {
-        audioPlayer = try AVAudioPlayer(contentsOf: audioFileName)
-        audioPlayer.delegate = self
-        audioPlayer.prepareToPlay()
-        audioPlayer.volume = 1.0
-    }catch {
-        print(error)
+    func setUpPlayer() {
+        
+        let audioFileName = fetchingDocumentDirectory().appendingPathComponent(String(fileTit.suffix(40)))
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: audioFileName)
+            audioPlayer.delegate = self
+            audioPlayer.prepareToPlay()
+            audioPlayer.volume = 1.0
+            
+            let audioSession = AVAudioSession.sharedInstance()
+            
+            do {
+                try audioSession.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+            } catch let error as NSError {
+                print("audioSession error: \(error.localizedDescription)")
+            }
+            
+        }catch {
+            print(error)
         }
     }
     
@@ -96,6 +106,7 @@ func setUpPlayer() {
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
 
         }
+        print(flag,"recorddidFinish")
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
     }
 }

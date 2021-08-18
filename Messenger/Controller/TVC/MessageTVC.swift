@@ -54,14 +54,13 @@ class MessageTVC: UITableViewCell {
         
         
         if message.isFistUser{
-            conteinerView.backgroundColor = .systemGreen //#colorLiteral(red: 0.8862745098, green: 0.9843137255, blue: 0.7882352941, alpha: 1)
-            //timeLbl.textColor = #colorLiteral(red: 0.2078431373, green: 0.7803921569, blue: 0.2941176471, alpha: 1)
+            conteinerView.backgroundColor = .systemGreen
             conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             checkImg.isHidden = false
             trailingConst.isActive = true
             textLbl.textAlignment = .right
         }else{
-            //timeLbl.textColor = .lightGray
+            
             conteinerView.backgroundColor = .systemBlue
             checkImg.isHidden = true
             leadingConst.isActive = true

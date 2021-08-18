@@ -18,6 +18,8 @@ class DocumentVC: UIViewController ,WKNavigationDelegate{
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(url)
+        
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
         let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
