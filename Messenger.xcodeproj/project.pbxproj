@@ -137,6 +137,9 @@
 		D0EAA98626C270BA00256412 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D05E466126CB87BD00C98D5B /* TimerView.swift */,
+				D02EAA4626CBCBA800CCD490 /* PulseButton.swift */,
+				D0DC7E5626CCF5CD0037F761 /* RecordBtn.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -167,10 +170,7 @@
 		D0EAA98926C270D400256412 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				D05E466126CB87BD00C98D5B /* TimerView.swift */,
 				D05E466D26CBC3B200C98D5B /* Extensions.swift */,
-				D02EAA4626CBCBA800CCD490 /* PulseButton.swift */,
-				D0DC7E5626CCF5CD0037F761 /* RecordBtn.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";

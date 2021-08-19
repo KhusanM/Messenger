@@ -77,7 +77,7 @@ class RecordBtn: UIButton {
                 self.backgroundColor = .systemGreen
                     
                 //self.setImage(UIImage(systemName: "mic.fill"), for: .normal)
-                self.tintColor = .clear
+                self.tintColor = .white
                 
                 UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.3, options: .curveEaseIn) {
                     self.transform = .init(scaleX: 1.6, y: 1.6)
@@ -115,7 +115,7 @@ class RecordBtn: UIButton {
             self.transform = .identity
 
             
-            self.tintColor = .darkGray
+            self.tintColor = .lightGray
             time?.invalidate()
             view.removeFromSuperview()
             audioRecorder.stop()

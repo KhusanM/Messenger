@@ -23,6 +23,8 @@ class PhotoTVC: UITableViewCell {
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var timerView: TimerView!
     @IBOutlet weak var downloadImg: UIImageView!
+    @IBOutlet weak var realTimeLbl: UILabel!
+    @IBOutlet weak var checkImg: UIImageView!
     
     
     

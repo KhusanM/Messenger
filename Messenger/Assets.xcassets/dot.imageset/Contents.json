@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "Voice Icon.png",
+      "filename" : "dot.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Voice Icon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Voice Icon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -35,7 +35,10 @@ struct MessageData {
     var mediaType: MediaType?
     
     var audiFiles: String?
+    
 }
+
+
 
 
 class MainVC: UIViewController {
@@ -90,7 +93,10 @@ class MainVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+        
+        
+        
+        
         keyboardHandling()
         navigationItem.title = "Chat"
         sendBtn.layer.cornerRadius = 15
@@ -119,13 +125,20 @@ class MainVC: UIViewController {
     
     
     func openFilePicker() {
-        let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
+        let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.import)
         documentPicker.delegate = self
         
         self.present(documentPicker,animated: true,completion: nil)
     }
     
-
+    private func realTime() -> String{
+        let date = Date()
+        let df = DateFormatter()
+        df.dateFormat = "HH:mm"
+        let dateString = df.string(from: date)
+        
+        return dateString
+    }
     
     @IBAction func leftBtnTapped(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -195,13 +208,14 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
             cell.index = indexPath
             cell.delegate = self
+            cell.realTimeLbl.text = realTime()
             cell.updadeCell(with: messages[indexPath.row])
             cell.selectionStyle = .none
             return cell
             
         }else if messages[indexPath.row].text != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
-            
+            cell.timeLbl.text = realTime()
             cell.updateCell(message: messages[indexPath.row])
             
             cell.selectionStyle = .none
@@ -211,6 +225,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         }else if messages[indexPath.row].documentURL != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             cell.index = indexPath
+            cell.timeLbl.text = realTime()
             cell.delegate = self
             cell.updateCell(file: messages[indexPath.row])
             cell.selectionStyle = .none
@@ -218,7 +233,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         }else{
             let cell = tableView.dequeueReusableCell(withIdentifier: AudioTVC.identifair, for: indexPath) as! AudioTVC
             cell.index = indexPath
-            
+            cell.realTimeLbl.text = realTime()
             cell.updateCell(ar: messages[indexPath.row])
             
             cell.selectionStyle = .none
@@ -397,6 +412,7 @@ extension MainVC{
 
 extension MainVC: ChatDelegate{
     
+    
     func didSelectDocument(index: IndexPath) {
         
         let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
@@ -415,16 +431,20 @@ extension MainVC: ChatDelegate{
             navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    
 }
 
 
 extension MainVC: RecordBtnDelegate{
     func getUrl(url: String) {
-//        print(url)
+        
         messages.append(MessageData(isFistUser: isFirstUser, audiFiles: url))
         
         tableViewReload()
     }
+    
+    
     
     
 }

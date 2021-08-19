@@ -15,8 +15,16 @@ class AudioTVC: UITableViewCell {
     var audioPlayer = AVAudioPlayer()
 
     @IBOutlet weak var labell: UILabel!
-    @IBOutlet weak var slider: UISlider!
+    @IBOutlet weak var slider: UISlider!{
+        didSet{
+            let image:UIImage? = UIImage(named: "dot")
+            slider.setThumbImage(image, for: .normal)
+            slider.setThumbImage(image, for: .highlighted)
+        }
+    }
     @IBOutlet weak var playBtn: UIButton!
+    @IBOutlet weak var realTimeLbl: UILabel!
+    @IBOutlet weak var checkImg: UIImageView!
     
     var urls : [String] = []
     var index : IndexPath!
@@ -33,12 +41,13 @@ class AudioTVC: UITableViewCell {
     func updateCell(ar: MessageData) {
         
         self.fileTit = ar.audiFiles ?? ""
-        
     }
     
     @IBAction func playBtnPressed(_ sender: Any) {
         
+        
         if !audioPlayer.isPlaying {
+            
             playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             setUpPlayer()
             audioPlayer.play()
@@ -53,7 +62,6 @@ class AudioTVC: UITableViewCell {
             timeSlider?.invalidate()
             audioPlayer.stop()
         }
-
         
     }
     
