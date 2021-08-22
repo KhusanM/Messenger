@@ -18,7 +18,7 @@ class PhotoTVC: UITableViewCell {
     
     static let identifier = "PhotoTVC"
     
-    @IBOutlet weak var conteinerView: UIView!
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var backGroundPhoto: UIImageView!
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var timerView: TimerView!
@@ -38,6 +38,8 @@ class PhotoTVC: UITableViewCell {
     var index : IndexPath!
     var didSelect = false
     
+    
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         leadingConst.isActive = false
@@ -48,15 +50,16 @@ class PhotoTVC: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         imgView.applyBlurEffect()
-        conteinerView.layer.cornerRadius = 20
+        containerView.layer.cornerRadius = 20
         
-        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectTapped))
+        containerView.addGestureRecognizer(tapGesture)
         
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
@@ -88,16 +91,16 @@ class PhotoTVC: UITableViewCell {
     
     func updadeCell(with: MessageData){
 
-        trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
-        leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
+        trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
+        leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
         
         
         if with.isFistUser{
-            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             trailingConst.isActive = true
         }else{
             leadingConst.isActive = true
-            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         }
         
         backGroundPhoto.image = with.image
@@ -106,7 +109,7 @@ class PhotoTVC: UITableViewCell {
         
     }
     
-    @IBAction func didSelectBtnTapped(_ sender: UIButton) {
+    @objc func didSelectTapped(){
         if !didSelect{
             downloadImg.isHidden = true
             reloadView()

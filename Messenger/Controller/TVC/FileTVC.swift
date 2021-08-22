@@ -20,7 +20,7 @@ class FileTVC: UITableViewCell {
     @IBOutlet weak var timeLbl: UILabel!
     @IBOutlet weak var downloadImg: UIImageView!
     @IBOutlet weak var timerView: TimerView!
-    
+    @IBOutlet weak var fileView: UIView!
     @IBOutlet weak var fileImg: UIImageView!
     
     
@@ -39,6 +39,9 @@ class FileTVC: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         containerView.layer.cornerRadius = 20
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectTapped))
+        fileView.addGestureRecognizer(tapGesture)
         
     }
     
@@ -66,7 +69,8 @@ class FileTVC: UITableViewCell {
         fileSizeLbl.text = file.documentSize
     }
     
-    @IBAction func fileBtnTapped(_ sender: Any) {
+
+    @objc func didSelectTapped(){
         if !didSelect{
             downloadImg.isHidden = true
             reloadView()
@@ -78,8 +82,6 @@ class FileTVC: UITableViewCell {
             delegate?.didSelectDocument(index: index)
         }
         
-        
     }
-    
     
 }

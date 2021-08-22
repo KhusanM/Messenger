@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -41,12 +42,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="61" height="61"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     </view>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nci-UP-yGU">
-                                                        <rect key="frame" x="0.0" y="0.0" width="61" height="61"/>
-                                                        <connections>
-                                                            <action selector="fileBtnTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="xdC-Bj-V3h"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -58,14 +53,10 @@
                                                     <constraint firstAttribute="trailing" secondItem="30x-qo-eZn" secondAttribute="trailing" id="O2f-q4-nuf"/>
                                                     <constraint firstItem="30x-qo-eZn" firstAttribute="top" secondItem="S5a-ez-OfI" secondAttribute="top" id="T0q-ev-4t1"/>
                                                     <constraint firstAttribute="bottom" secondItem="30x-qo-eZn" secondAttribute="bottom" id="UbE-9R-Jau"/>
-                                                    <constraint firstItem="Nci-UP-yGU" firstAttribute="leading" secondItem="S5a-ez-OfI" secondAttribute="leading" id="UlA-ae-SCy"/>
                                                     <constraint firstItem="jYP-o7-m3H" firstAttribute="top" secondItem="S5a-ez-OfI" secondAttribute="top" id="iuS-Ia-NDL"/>
-                                                    <constraint firstItem="Nci-UP-yGU" firstAttribute="top" secondItem="S5a-ez-OfI" secondAttribute="top" id="k6m-4k-Om5"/>
                                                     <constraint firstItem="jYP-o7-m3H" firstAttribute="leading" secondItem="S5a-ez-OfI" secondAttribute="leading" id="lAR-g5-UeZ"/>
-                                                    <constraint firstAttribute="trailing" secondItem="Nci-UP-yGU" secondAttribute="trailing" id="rw6-QS-U03"/>
                                                     <constraint firstItem="30x-qo-eZn" firstAttribute="leading" secondItem="S5a-ez-OfI" secondAttribute="leading" id="sT7-UH-UYB"/>
                                                     <constraint firstAttribute="width" secondItem="S5a-ez-OfI" secondAttribute="height" multiplier="1:1" id="u96-3o-Pk5"/>
-                                                    <constraint firstAttribute="bottom" secondItem="Nci-UP-yGU" secondAttribute="bottom" id="uEi-qg-vfQ"/>
                                                     <constraint firstAttribute="trailing" secondItem="jYP-o7-m3H" secondAttribute="trailing" id="vKO-WQ-UzN"/>
                                                 </constraints>
                                             </view>
@@ -136,6 +127,7 @@
                 <outlet property="fileImg" destination="30x-qo-eZn" id="rPb-Zr-J5h"/>
                 <outlet property="fileNameLbl" destination="yI5-S0-QsX" id="cD4-hM-evr"/>
                 <outlet property="fileSizeLbl" destination="Jx5-nv-flt" id="Op4-4g-Tf7"/>
+                <outlet property="fileView" destination="S5a-ez-OfI" id="uGI-Fa-KNf"/>
                 <outlet property="timeLbl" destination="RcD-SX-q6h" id="jaW-Iw-VKI"/>
                 <outlet property="timerView" destination="CHs-07-Rn7" id="spG-yB-6sZ"/>
             </connections>

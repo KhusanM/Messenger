@@ -17,7 +17,7 @@ class MessageTVC: UITableViewCell {
     
     @IBOutlet weak var checkImg: UIImageView!
     @IBOutlet weak var timeLbl: UILabel!
-    @IBOutlet weak var conteinerView: UIView!
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var textLbl: UILabel!
     
     
@@ -34,7 +34,7 @@ class MessageTVC: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        conteinerView.layer.cornerRadius = conteinerView.bounds.height * 0.15
+        containerView.layer.cornerRadius = containerView.bounds.height * 0.15
         textLbl.textColor = .white
         timeLbl.textColor = .white
     }
@@ -47,24 +47,24 @@ class MessageTVC: UITableViewCell {
     
     func updateCell(message: MessageData){
         
-        conteinerView.clipsToBounds = true
-        trailingConst = conteinerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
-        leadingConst = conteinerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
+        containerView.clipsToBounds = true
+        trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
+        leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
         textLbl.text = message.text
         
         
         if message.isFistUser{
-            conteinerView.backgroundColor = .systemGreen
-            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
+            containerView.backgroundColor = .systemGreen
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             checkImg.isHidden = false
             trailingConst.isActive = true
             textLbl.textAlignment = .right
         }else{
             
-            conteinerView.backgroundColor = .systemBlue
+            containerView.backgroundColor = .systemBlue
             checkImg.isHidden = true
             leadingConst.isActive = true
-            conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
             textLbl.textAlignment = .left
         }
     }

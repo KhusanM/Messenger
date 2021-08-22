@@ -19,7 +19,7 @@ class AudioTVC: UITableViewCell {
     @IBOutlet weak var playBtn: UIButton!
     @IBOutlet weak var realTimeLbl: UILabel!
     @IBOutlet weak var checkImg: UIImageView!
-    @IBOutlet weak var conteinerView: UIView!
+    @IBOutlet weak var containerView: UIView!
     
     var urls : [String] = []
     var index : IndexPath!
@@ -29,8 +29,8 @@ class AudioTVC: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        conteinerView.layer.cornerRadius = 20
-        conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
+        containerView.layer.cornerRadius = 20
+        containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
         audioPlayer.delegate = self
         slider.value = Float(audioPlayer.duration)
     }

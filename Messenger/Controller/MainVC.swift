@@ -170,7 +170,7 @@ class MainVC: UIViewController {
         
         if isEditingText{
             messages[indexEditText.row].text = textView.text
-            tableView.reloadData()
+            tableView.reloadRows(at: [indexEditText], with: .fade)
             textView.text.removeAll()
             isEditingText = false
         }else{
@@ -250,6 +250,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {[self] _  in
+
             if messages[indexPath.row].text != nil{
                 if messages[indexPath.row].isFistUser{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
@@ -302,6 +303,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("didselect")
     }
+    
+    
     
 }
 

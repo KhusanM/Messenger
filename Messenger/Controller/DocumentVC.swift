@@ -8,7 +8,7 @@
 
 import UIKit
 import WebKit
-
+import CloudKit
 
 class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionControllerDelegate{
 
@@ -29,10 +29,6 @@ class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionC
 //            webView.loadFileURL(indexFileUrl, allowingReadAccessTo: documentDirUrl)
 //        }
         
-        
-        webView.load(URLRequest(url: url))
-        webView.allowsBackForwardNavigationGestures = true
-
         if #available(iOS 13.0, *) {
             let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
             navigationItem.rightBarButtonItem = shareBtn
@@ -43,6 +39,12 @@ class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionC
         
     }
     
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        webView.load(URLRequest(url: url))
+        webView.allowsBackForwardNavigationGestures = true
+    }
     @objc func shareBtnTapped() {
         
         let data = [url!] as [Any]
