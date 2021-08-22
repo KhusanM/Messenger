@@ -59,6 +59,7 @@ class MainVC: UIViewController {
     @IBOutlet weak var sendBtn: RecordBtn!{
         didSet{
             sendBtn.delegate = self
+            sendBtn.layer.cornerRadius = 15
         }
     }
     
@@ -79,28 +80,24 @@ class MainVC: UIViewController {
         }
     }
     
-   
+    
     var isMicraphone = true
     var messages: [MessageData] = []
     
     var keyboardHeight: CGFloat!
     var isFirstUser = true
     
-    
-    
+    var indexEditText : IndexPath!
+    var isEditingText = false
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
-        
-        
-        
         keyboardHandling()
         navigationItem.title = "Chat"
-        sendBtn.layer.cornerRadius = 15
-
+        
         
     }
     
@@ -125,7 +122,7 @@ class MainVC: UIViewController {
     
     
     func openFilePicker() {
-        let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.import)
+        let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
         documentPicker.delegate = self
         
         self.present(documentPicker,animated: true,completion: nil)
@@ -169,14 +166,23 @@ class MainVC: UIViewController {
     }
     
     @IBAction func sendBtnTapped(_ sender: Any) {
+        textView.isScrollEnabled = false
         
-        if !textView.text!.isEmpty && !isMicraphone {
-            messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
-            
-            tableViewReload()
-            isFirstUser = !isFirstUser
+        if isEditingText{
+            messages[indexEditText.row].text = textView.text
+            tableView.reloadData()
             textView.text.removeAll()
+            isEditingText = false
         }else{
+            if !textView.text!.isEmpty && !isMicraphone {
+                messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
+                
+                tableViewReload()
+                isFirstUser = !isFirstUser
+                textView.text.removeAll()
+            }else{
+                
+            }
             
         }
     }
@@ -241,9 +247,62 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {[self] _  in
+            if messages[indexPath.row].text != nil{
+                if messages[indexPath.row].isFistUser{
+                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = messages[indexPath.row].text
+                    }
+                    
+                    let edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
+                        self.isEditingText = true
+                        self.indexEditText = indexPath
+                        self.textView.text = messages[indexPath.row].text
+                    }
+                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                        self.messages.remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
+                    return UIMenu(title: "", children: [copy,edit, delete])
+                    
+                }else{
+                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = messages[indexPath.row].text
+                    }
+                    
+                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                        self.messages.remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
+                    return UIMenu(title: "", children: [copy, delete])
+                }
+            
+            }else if messages[indexPath.row].image != nil{
+                let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
+                    UIImageWriteToSavedPhotosAlbum(messages[indexPath.row].image!, nil, nil, nil)
+                }
+                
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    self.messages.remove(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                }
+                return UIMenu(title: "", children: [saveToCameraRoll, delete])
+                
+            }else{
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    self.messages.remove(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                }
+                return UIMenu(title: "", children: [delete])
+            }
+        }
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("didselect")
+    }
+    
 }
 
 
@@ -255,24 +314,31 @@ extension MainVC: UITextViewDelegate{
         
         if textView.contentSize.height >= 150 {
             textView.isScrollEnabled = true
-        }else {
-            
-            textView.isScrollEnabled = false
         }
         return true
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
         if !textView.text.isEmpty{
-            sendBtn.setBackgroundImage(UIImage(systemName: "arrow.up.circle.fill"), for: .normal)
+            textView.becomeFirstResponder()
+            if #available(iOS 13.0, *) {
+                sendBtn.setBackgroundImage(UIImage(systemName: "arrow.up.circle.fill"), for: .normal)
+            } else {
+                // Fallback on earlier versions
+            }
             sendBtn.tintColor = .systemBlue
             isMicraphone = false
         }else{
             sendBtn.setBackgroundImage(UIImage(named: "mic"), for: .normal)
-            sendBtn.tintColor = .systemGray2
+            if #available(iOS 13.0, *) {
+                sendBtn.tintColor = .systemGray2
+            } else {
+                // Fallback on earlier versions
+            }
             isMicraphone = true
         }
     }
+    
     
 }
 
@@ -303,11 +369,11 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
 extension MainVC: UIDocumentPickerDelegate{
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         
-               
+        
         guard let myURL = urls.first else {return}
         
         guard let filename = urls.first?.lastPathComponent else{ return}
-
+        
         
         // Start accessing a security-scoped resource.
         guard myURL.startAccessingSecurityScopedResource() else {
@@ -317,45 +383,47 @@ extension MainVC: UIDocumentPickerDelegate{
         
         // Make sure you release the security-scoped resource when you finish.
         defer { myURL.stopAccessingSecurityScopedResource() }
-        
+
         // Use file coordination for reading and writing any of the URL’s content.
         var error: NSError? = nil
         NSFileCoordinator().coordinate(readingItemAt: myURL, error: &error) { (url) in
-            
+
             let keys : [URLResourceKey] = [.nameKey, .isDirectoryKey]
-            
+
             // Get an enumerator for the directory's content.
             guard let fileList =
                     FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
                 Swift.debugPrint("*** Unable to access the contents of \(url.path) ***\n")
                 return
             }
-            
+
             for case let file as URL in fileList {
                 // Start accessing the content's security-scoped URL.
                 guard url.startAccessingSecurityScopedResource() else {
                     // Handle the failure here.
                     continue
                 }
-                
+
                 // Do something with the file here.
                 Swift.debugPrint("chosen file: \(file.lastPathComponent)")
-                
+
                 // Make sure you release the security-scoped resource when you finish.
                 url.stopAccessingSecurityScopedResource()
+
+
             }
+            print(url)
+
         }
         
         
-
-
-        self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL,documentSize: "\(myURL.fileSizeString)"))
+         self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL, documentSize: "\(myURL.fileSizeString)"))
         
         
         tableViewReload()
         
     }
-   
+    
 }
 
 
@@ -363,7 +431,7 @@ extension MainVC: UIDocumentPickerDelegate{
 
 
 extension MainVC{
-
+    
     @objc fileprivate func keyboardWillShow(notification: Notification) {
         
         if let keyFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
@@ -397,7 +465,7 @@ extension MainVC{
         let duration = notification.userInfo![durationKey] as! Double
         let curveKey = UIResponder.keyboardAnimationCurveUserInfoKey
         let curveValue = notification.userInfo![curveKey] as! Int
-
+        
         UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions.init(rawValue: UInt(curveValue))) {
             self.bottomConteinerView.transform = .identity
         } completion: { (_) in }
@@ -408,27 +476,37 @@ extension MainVC{
 }
 
 
-// MARK:- Push To ImagePresentVC And File
+// MARK:- Push To ImagePresentVC And File and Voice
 
 extension MainVC: ChatDelegate{
     
     
     func didSelectDocument(index: IndexPath) {
         
-        let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
-        vc.modalPresentationStyle = .fullScreen
-        vc.url = messages[index.row].documentURL
-        navigationController?.pushViewController(vc, animated: true)
+        if #available(iOS 13.0, *) {
+            let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
+            vc.modalPresentationStyle = .fullScreen
+            vc.url = messages[index.row].documentURL
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            // Fallback on earlier versions
+        }
+        
         
     }
     
     func didSelectImage(index: IndexPath) {
         if messages[index.row].image != nil{
             
-            let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
-            vc.modalPresentationStyle = .fullScreen
-            vc.img = messages[index.row].image!
-            navigationController?.pushViewController(vc, animated: true)
+            if #available(iOS 13.0, *) {
+                let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
+                vc.modalPresentationStyle = .fullScreen
+                vc.img = messages[index.row].image!
+                navigationController?.pushViewController(vc, animated: true)
+            } else {
+                // Fallback on earlier versions
+            }
+            
         }
     }
     
@@ -443,8 +521,6 @@ extension MainVC: RecordBtnDelegate{
         
         tableViewReload()
     }
-    
-    
     
     
 }

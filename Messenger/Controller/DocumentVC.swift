@@ -10,26 +10,37 @@ import UIKit
 import WebKit
 
 
-class DocumentVC: UIViewController ,WKNavigationDelegate{
+class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionControllerDelegate{
 
 
     var webView: WKWebView!
     var url: URL!
 
-  
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
         
+//        let documentDirUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+//        let fileNameWithExtension = url.absoluteString
+//        let indexFileUrl = documentDirUrl.appendingPathComponent(fileNameWithExtension)
+//        if FileManager.default.fileExists(atPath: indexFileUrl.path) {
+//            webView.loadFileURL(indexFileUrl, allowingReadAccessTo: documentDirUrl)
+//        }
+        
+        
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
-        let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
+
+        if #available(iOS 13.0, *) {
+            let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
+            navigationItem.rightBarButtonItem = shareBtn
+        } else {
+            // Fallback on earlier versions
+        }
         
-        navigationItem.rightBarButtonItem = shareBtn
+        
     }
     
     @objc func shareBtnTapped() {

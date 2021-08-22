@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -24,7 +25,7 @@
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="AxS-xS-6K3">
                     <rect key="frame" x="0.0" y="44" width="414" height="852"/>
-                    <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </tableView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ggn-RJ-2ow">
                     <rect key="frame" x="0.0" y="815" width="414" height="81"/>
@@ -52,7 +53,7 @@
                                 <constraint firstAttribute="width" secondItem="aIH-0t-2K1" secondAttribute="height" id="l7h-nK-56G"/>
                                 <constraint firstAttribute="height" constant="30" id="mdZ-nv-T3k"/>
                             </constraints>
-                            <color key="tintColor" systemColor="systemGray2Color"/>
+                            <color key="tintColor" red="0.52549019610000003" green="0.52549019610000003" blue="0.52549019610000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal" backgroundImage="mic"/>
                             <connections>
                                 <action selector="sendBtnTapped:" destination="-1" eventType="touchUpInside" id="mRR-6O-gio"/>
@@ -86,7 +87,7 @@
                 <constraint firstItem="AxS-xS-6K3" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="cCq-Mh-3HZ"/>
                 <constraint firstItem="AxS-xS-6K3" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="tGu-qg-Ce7"/>
             </constraints>
-            <point key="canvasLocation" x="105.79710144927537" y="83.705357142857139"/>
+            <point key="canvasLocation" x="136" y="88"/>
         </view>
     </objects>
     <resources>
@@ -94,12 +95,6 @@
         <image name="paperclip" width="27" height="27"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

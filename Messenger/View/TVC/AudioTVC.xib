@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -97,11 +98,6 @@
                             <constraint firstItem="AwO-hI-Nc9" firstAttribute="top" secondItem="IdO-kY-sTp" secondAttribute="top" constant="6" id="ipr-pM-BSH"/>
                             <constraint firstAttribute="bottom" secondItem="8qj-Cw-7KJ" secondAttribute="bottom" constant="5" id="tUV-FO-2c8"/>
                         </constraints>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <integer key="value" value="20"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
                 <constraints>
@@ -115,6 +111,7 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="checkImg" destination="aMO-Uc-dRb" id="X0m-mv-6Ei"/>
+                <outlet property="conteinerView" destination="IdO-kY-sTp" id="v7C-Hj-9aA"/>
                 <outlet property="labell" destination="F7l-H0-7PE" id="g5w-Of-Y4k"/>
                 <outlet property="playBtn" destination="aIe-6h-D3v" id="5jJ-n0-RNR"/>
                 <outlet property="realTimeLbl" destination="4BQ-l7-pyd" id="jVK-6k-Xf0"/>

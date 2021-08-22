@@ -15,16 +15,11 @@ class AudioTVC: UITableViewCell {
     var audioPlayer = AVAudioPlayer()
 
     @IBOutlet weak var labell: UILabel!
-    @IBOutlet weak var slider: UISlider!{
-        didSet{
-            let image:UIImage? = UIImage(named: "dot")
-            slider.setThumbImage(image, for: .normal)
-            slider.setThumbImage(image, for: .highlighted)
-        }
-    }
+    @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var playBtn: UIButton!
     @IBOutlet weak var realTimeLbl: UILabel!
     @IBOutlet weak var checkImg: UIImageView!
+    @IBOutlet weak var conteinerView: UIView!
     
     var urls : [String] = []
     var index : IndexPath!
@@ -34,6 +29,8 @@ class AudioTVC: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        conteinerView.layer.cornerRadius = 20
+        conteinerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
         audioPlayer.delegate = self
         slider.value = Float(audioPlayer.duration)
     }
@@ -43,6 +40,7 @@ class AudioTVC: UITableViewCell {
         self.fileTit = ar.audiFiles ?? ""
     }
     
+    @available(iOS 13.0, *)
     @IBAction func playBtnPressed(_ sender: Any) {
         
         
@@ -111,11 +109,19 @@ extension AudioTVC: AVAudioPlayerDelegate  {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         if player.duration == 0 {
             player.stop()
-            playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            if #available(iOS 13.0, *) {
+                playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            } else {
+                // Fallback on earlier versions
+            }
 
         }
         print(flag,"recorddidFinish")
+        if #available(iOS 13.0, *) {
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }
 // MARK: @OBJ
