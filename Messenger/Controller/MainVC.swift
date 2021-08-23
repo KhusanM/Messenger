@@ -82,7 +82,7 @@ class MainVC: UIViewController {
     
     
     var isMicraphone = true
-    var messages: [MessageData] = []
+    var messages: [[MessageData]] = [[],[]]
     
     var keyboardHeight: CGFloat!
     var isFirstUser = true
@@ -90,6 +90,7 @@ class MainVC: UIViewController {
     var indexEditText : IndexPath!
     var isEditingText = false
     
+    var dateForSection = ["August 23", "August 24"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,11 +102,11 @@ class MainVC: UIViewController {
         
     }
     
-    private func tableViewReload(){
+    private func tableViewReload(section: Int){
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath.init(row: messages.count - 1, section: 0)], with: .fade)
+        tableView.insertRows(at: [IndexPath.init(row: messages[section].count - 1, section: section)], with: .fade)
         tableView.endUpdates()
-        tableView.scrollToRow(at: IndexPath(row: messages.count-1, section: 0), at: .top, animated: true)
+        tableView.scrollToRow(at: IndexPath(row: messages[section].count-1, section: section), at: .top, animated: true)
     }
     
     private func keyboardHandling(){
@@ -114,10 +115,6 @@ class MainVC: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc func dismissKeyboard(){
-        self.view.endEditing(true)
     }
     
     
@@ -169,15 +166,15 @@ class MainVC: UIViewController {
         textView.isScrollEnabled = false
         
         if isEditingText{
-            messages[indexEditText.row].text = textView.text
+            messages[indexEditText.section][indexEditText.row].text = textView.text
             tableView.reloadRows(at: [indexEditText], with: .fade)
             textView.text.removeAll()
             isEditingText = false
         }else{
             if !textView.text!.isEmpty && !isMicraphone {
-                messages.append(MessageData(text: textView.text, isFistUser: isFirstUser))
-                
-                tableViewReload()
+                messages[1].append(MessageData(text: textView.text, isFistUser: isFirstUser))
+
+                tableViewReload(section: 1)
                 isFirstUser = !isFirstUser
                 textView.text.removeAll()
             }else{
@@ -191,18 +188,58 @@ class MainVC: UIViewController {
 
 //MARK:- TableView Delegate
 extension MainVC: UITableViewDelegate, UITableViewDataSource{
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return messages.count
+        return messages[section].count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        1
+        return messages.count
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return dateForSection[section]
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.backgroundColor = .lightGray
+        label.text = dateForSection[section]
+        label.textColor = .white
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        let originalContentSize = label.intrinsicContentSize
+        
+        
+        let containerView = UIView()
+        containerView.addSubview(label)
+        label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        label.heightAnchor.constraint(equalToConstant: originalContentSize.height + 12).isActive = true
+        label.widthAnchor.constraint(equalToConstant: originalContentSize.width + 16).isActive = true
+        
+        
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = (originalContentSize.height + 12) / 2
+        
+        return containerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if messages[section].count == 0{
+            return 0
+        }else{
+            return 29
+        }
+        
+    }
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 49
     }
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
@@ -210,37 +247,37 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if messages[indexPath.row].image != nil{
+        if messages[indexPath.section][indexPath.row].image != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
             cell.index = indexPath
             cell.delegate = self
             cell.realTimeLbl.text = realTime()
-            cell.updadeCell(with: messages[indexPath.row])
+            cell.updadeCell(with: messages[indexPath.section][indexPath.row])
             cell.selectionStyle = .none
             return cell
             
-        }else if messages[indexPath.row].text != nil{
+        }else if messages[indexPath.section][indexPath.row].text != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
             cell.timeLbl.text = realTime()
-            cell.updateCell(message: messages[indexPath.row])
+            cell.updateCell(message: messages[indexPath.section][indexPath.row])
             
             cell.selectionStyle = .none
             
             return cell
             
-        }else if messages[indexPath.row].documentURL != nil{
+        }else if messages[indexPath.section][indexPath.row].documentURL != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
             cell.index = indexPath
             cell.timeLbl.text = realTime()
             cell.delegate = self
-            cell.updateCell(file: messages[indexPath.row])
+            cell.updateCell(file: messages[indexPath.section][indexPath.row])
             cell.selectionStyle = .none
             return cell
         }else{
             let cell = tableView.dequeueReusableCell(withIdentifier: AudioTVC.identifair, for: indexPath) as! AudioTVC
             cell.index = indexPath
             cell.realTimeLbl.text = realTime()
-            cell.updateCell(ar: messages[indexPath.row])
+            cell.updateCell(ar: messages[indexPath.section][indexPath.row])
             
             cell.selectionStyle = .none
             return cell
@@ -251,58 +288,56 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {[self] _  in
 
-            if messages[indexPath.row].text != nil{
-                if messages[indexPath.row].isFistUser{
+            if messages[indexPath.section][indexPath.row].text != nil{
+                if messages[indexPath.section][indexPath.row].isFistUser{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-                        UIPasteboard.general.string = messages[indexPath.row].text
+                        UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
                     }
                     
                     let edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
                         self.isEditingText = true
                         self.indexEditText = indexPath
-                        self.textView.text = messages[indexPath.row].text
+                        self.textView.text = messages[indexPath.section][indexPath.row].text
                     }
                     let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                        self.messages.remove(at: indexPath.row)
+                        self.messages[indexPath.section].remove(at: indexPath.row)
                         self.tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                     return UIMenu(title: "", children: [copy,edit, delete])
                     
                 }else{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-                        UIPasteboard.general.string = messages[indexPath.row].text
+                        UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
                     }
                     
                     let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                        self.messages.remove(at: indexPath.row)
+                        self.messages[indexPath.section].remove(at: indexPath.row)
                         self.tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                     return UIMenu(title: "", children: [copy, delete])
                 }
             
-            }else if messages[indexPath.row].image != nil{
+            }else if messages[indexPath.section][indexPath.row].image != nil{
                 let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
-                    UIImageWriteToSavedPhotosAlbum(messages[indexPath.row].image!, nil, nil, nil)
+                    UIImageWriteToSavedPhotosAlbum(messages[indexPath.section][indexPath.row].image!, nil, nil, nil)
                 }
                 
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                    self.messages.remove(at: indexPath.row)
+                    self.messages[indexPath.section].remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .fade)
                 }
                 return UIMenu(title: "", children: [saveToCameraRoll, delete])
                 
             }else{
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                    self.messages.remove(at: indexPath.row)
+                    self.messages[indexPath.section].remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .fade)
                 }
                 return UIMenu(title: "", children: [delete])
             }
         }
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("didselect")
-    }
+    
     
     
     
@@ -356,8 +391,8 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
             
             let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
             
-            messages.append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
-            tableViewReload()
+            messages[1].append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
+            tableViewReload(section: 1)
             isFirstUser = !isFirstUser
         default:
             break
@@ -420,10 +455,10 @@ extension MainVC: UIDocumentPickerDelegate{
         }
         
         
-         self.messages.append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL, documentSize: "\(myURL.fileSizeString)"))
+         self.messages[0].append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL, documentSize: "\(myURL.fileSizeString)"))
         
         
-        tableViewReload()
+        tableViewReload(section: 0)
         
     }
     
@@ -434,6 +469,10 @@ extension MainVC: UIDocumentPickerDelegate{
 
 
 extension MainVC{
+    
+    @objc func dismissKeyboard(){
+        self.view.endEditing(true)
+    }
     
     @objc fileprivate func keyboardWillShow(notification: Notification) {
         
@@ -489,7 +528,7 @@ extension MainVC: ChatDelegate{
         if #available(iOS 13.0, *) {
             let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
             vc.modalPresentationStyle = .fullScreen
-            vc.url = messages[index.row].documentURL
+            vc.url = messages[index.section][index.row].documentURL
             navigationController?.pushViewController(vc, animated: true)
         } else {
             // Fallback on earlier versions
@@ -499,12 +538,12 @@ extension MainVC: ChatDelegate{
     }
     
     func didSelectImage(index: IndexPath) {
-        if messages[index.row].image != nil{
+        if messages[index.section][index.row].image != nil{
             
             if #available(iOS 13.0, *) {
                 let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
                 vc.modalPresentationStyle = .fullScreen
-                vc.img = messages[index.row].image!
+                vc.img = messages[index.section][index.row].image!
                 navigationController?.pushViewController(vc, animated: true)
             } else {
                 // Fallback on earlier versions
@@ -520,9 +559,9 @@ extension MainVC: ChatDelegate{
 extension MainVC: RecordBtnDelegate{
     func getUrl(url: String) {
         
-        messages.append(MessageData(isFistUser: isFirstUser, audiFiles: url))
+        messages[0].append(MessageData(isFistUser: isFirstUser, audiFiles: url))
         
-        tableViewReload()
+        tableViewReload(section: 0)
     }
     
     
