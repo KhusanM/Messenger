@@ -81,7 +81,6 @@ class MainVC: UIViewController {
     }
     
     
-    var isMicraphone = true
     var messages: [[MessageData]] = [[],[]]
     
     var keyboardHeight: CGFloat!
@@ -90,7 +89,6 @@ class MainVC: UIViewController {
     var indexEditText : IndexPath!
     var isEditingText = false
     
-    var dateForSection = ["August 23", "August 24"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,10 +169,10 @@ class MainVC: UIViewController {
             textView.text.removeAll()
             isEditingText = false
         }else{
-            if !textView.text!.isEmpty && !isMicraphone {
-                messages[1].append(MessageData(text: textView.text, isFistUser: isFirstUser))
+            if !textView.text!.isEmpty {
+                messages[0].append(MessageData(text: textView.text, isFistUser: isFirstUser))
 
-                tableViewReload(section: 1)
+                tableViewReload(section: 0)
                 isFirstUser = !isFirstUser
                 textView.text.removeAll()
             }else{
@@ -198,14 +196,10 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         return messages.count
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return dateForSection[section]
-    }
-    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
         label.backgroundColor = .lightGray
-        label.text = dateForSection[section]
+        label.text = "August 23"
         label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 14)
@@ -247,6 +241,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        
         if messages[indexPath.section][indexPath.row].image != nil{
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
             cell.index = indexPath
@@ -286,14 +281,15 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {[self] _  in
-
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) {[self] _  in
+            
             if messages[indexPath.section][indexPath.row].text != nil{
                 if messages[indexPath.section][indexPath.row].isFistUser{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
                         UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
                     }
-                    
+
                     let edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
                         self.isEditingText = true
                         self.indexEditText = indexPath
@@ -304,30 +300,30 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
                         self.tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                     return UIMenu(title: "", children: [copy,edit, delete])
-                    
+
                 }else{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
                         UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
                     }
-                    
+
                     let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                         self.messages[indexPath.section].remove(at: indexPath.row)
                         self.tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                     return UIMenu(title: "", children: [copy, delete])
                 }
-            
+
             }else if messages[indexPath.section][indexPath.row].image != nil{
                 let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
                     UIImageWriteToSavedPhotosAlbum(messages[indexPath.section][indexPath.row].image!, nil, nil, nil)
                 }
-                
+
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     self.messages[indexPath.section].remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .fade)
                 }
                 return UIMenu(title: "", children: [saveToCameraRoll, delete])
-                
+
             }else{
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     self.messages[indexPath.section].remove(at: indexPath.row)
@@ -339,7 +335,51 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     }
     
     
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+
+        return makeTargetedPreview(for: configuration)
+     
+    }
     
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+    
+        return makeTargetedPreview(for: configuration)
+    }
+    
+    @available(iOS 13.0, *)
+    private func makeTargetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+
+        
+        guard let indexPath = configuration.identifier as? IndexPath else { return nil }
+        
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        
+        if messages[indexPath.section][indexPath.row].text != nil{
+            guard let cell = tableView.cellForRow(at: indexPath) as? MessageTVC else { return nil }
+            
+            
+            return UITargetedPreview(view: cell.containerView, parameters: parameters)
+
+        }else if messages[indexPath.section][indexPath.row].audiFiles != nil{
+            guard let cell = tableView.cellForRow(at: indexPath) as? AudioTVC else {return nil}
+            
+            return UITargetedPreview(view: cell.containerView,parameters: parameters)
+        }else if messages[indexPath.section][indexPath.row].image != nil{
+            guard let cell = tableView.cellForRow(at: indexPath) as? PhotoTVC else {return nil}
+            
+            return UITargetedPreview(view: cell.containerView,parameters: parameters)
+        }else{
+            guard let cell = tableView.cellForRow(at: indexPath) as? FileTVC else {return nil}
+            
+            return UITargetedPreview(view: cell.containerView,parameters: parameters)
+
+        }
+        
+        
+    }
     
 }
 
@@ -365,7 +405,6 @@ extension MainVC: UITextViewDelegate{
                 // Fallback on earlier versions
             }
             sendBtn.tintColor = .systemBlue
-            isMicraphone = false
         }else{
             sendBtn.setBackgroundImage(UIImage(named: "mic"), for: .normal)
             if #available(iOS 13.0, *) {
@@ -373,7 +412,6 @@ extension MainVC: UITextViewDelegate{
             } else {
                 // Fallback on earlier versions
             }
-            isMicraphone = true
         }
     }
     
@@ -391,8 +429,8 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
             
             let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
             
-            messages[1].append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
-            tableViewReload(section: 1)
+            messages[0].append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg))
+            tableViewReload(section: 0)
             isFirstUser = !isFirstUser
         default:
             break

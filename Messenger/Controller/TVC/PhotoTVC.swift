@@ -63,26 +63,6 @@ class PhotoTVC: UITableViewCell {
         // Configure the view for the selected state
     }
     
-//    func blurEffect() {
-//
-//        let currentFilter = CIFilter(name: "CIGaussianBlur")
-//        let beginImage = CIImage(image: backGroundPhoto.image!)
-//        currentFilter!.setValue(beginImage, forKey: kCIInputImageKey)
-//        currentFilter!.setValue(40, forKey: kCIInputRadiusKey)
-//
-//        let cropFilter = CIFilter(name: "CICrop")
-//        cropFilter!.setValue(currentFilter!.outputImage, forKey: kCIInputImageKey)
-//        cropFilter!.setValue(CIVector(cgRect: beginImage!.extent), forKey: "inputRectangle")
-//
-//        let output = cropFilter!.outputImage
-//        let cgimg = context.createCGImage(output!, from: output!.extent)
-//        let processedImage = UIImage(cgImage: cgimg!)
-//
-//
-//        backGroundPhoto.image = processedImage
-//    }
-    
-    
 
     func reloadView(){
         timerView.createCircularPath(radius: 30, lineWidth: 3, bgLineColor: .clear,progressColor: .white, firstDuration: 3)
