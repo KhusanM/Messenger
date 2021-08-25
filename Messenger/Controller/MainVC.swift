@@ -196,6 +196,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         return messages.count
     }
     
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
         label.backgroundColor = .lightGray
@@ -284,7 +285,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
         
         return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) {[self] _  in
             
-            if messages[indexPath.section][indexPath.row].text != nil{
+            if let _ = tableView.cellForRow(at: indexPath) as? MessageTVC {
+                
                 if messages[indexPath.section][indexPath.row].isFistUser{
                     let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
                         UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
@@ -296,8 +298,11 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
                         self.textView.text = messages[indexPath.section][indexPath.row].text
                     }
                     let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                        self.messages[indexPath.section].remove(at: indexPath.row)
-                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.messages[indexPath.section].remove(at: indexPath.row)
+                            self.tableView.deleteRows(at: [indexPath], with: .fade)
+                        }
                     }
                     return UIMenu(title: "", children: [copy,edit, delete])
 
@@ -307,27 +312,33 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
                     }
 
                     let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                        self.messages[indexPath.section].remove(at: indexPath.row)
-                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.messages[indexPath.section].remove(at: indexPath.row)
+                            self.tableView.deleteRows(at: [indexPath], with: .fade)
+                        }
                     }
                     return UIMenu(title: "", children: [copy, delete])
                 }
 
-            }else if messages[indexPath.section][indexPath.row].image != nil{
+            }else if let _ = tableView.cellForRow(at: indexPath) as? PhotoTVC{
                 let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
                     UIImageWriteToSavedPhotosAlbum(messages[indexPath.section][indexPath.row].image!, nil, nil, nil)
                 }
 
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                    self.messages[indexPath.section].remove(at: indexPath.row)
-                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.messages[indexPath.section].remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
                 }
                 return UIMenu(title: "", children: [saveToCameraRoll, delete])
 
             }else{
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                    self.messages[indexPath.section].remove(at: indexPath.row)
-                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.messages[indexPath.section].remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
                 }
                 return UIMenu(title: "", children: [delete])
             }
@@ -337,48 +348,36 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource{
     
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-
+        
         return makeTargetedPreview(for: configuration)
-     
+        
     }
-    
+
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-    
         return makeTargetedPreview(for: configuration)
     }
+    
     
     @available(iOS 13.0, *)
     private func makeTargetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
 
-        
         guard let indexPath = configuration.identifier as? IndexPath else { return nil }
         
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         
-        if messages[indexPath.section][indexPath.row].text != nil{
-            guard let cell = tableView.cellForRow(at: indexPath) as? MessageTVC else { return nil }
-            
-            
+        if let cell = tableView.cellForRow(at: indexPath) as? MessageTVC {
             return UITargetedPreview(view: cell.containerView, parameters: parameters)
-
-        }else if messages[indexPath.section][indexPath.row].audiFiles != nil{
-            guard let cell = tableView.cellForRow(at: indexPath) as? AudioTVC else {return nil}
-            
-            return UITargetedPreview(view: cell.containerView,parameters: parameters)
-        }else if messages[indexPath.section][indexPath.row].image != nil{
-            guard let cell = tableView.cellForRow(at: indexPath) as? PhotoTVC else {return nil}
-            
-            return UITargetedPreview(view: cell.containerView,parameters: parameters)
-        }else{
-            guard let cell = tableView.cellForRow(at: indexPath) as? FileTVC else {return nil}
-            
-            return UITargetedPreview(view: cell.containerView,parameters: parameters)
-
+        }else if let cell = tableView.cellForRow(at: indexPath) as? FileTVC{
+            return UITargetedPreview(view: cell.containerView, parameters: parameters)
+        }else if let cell = tableView.cellForRow(at: indexPath) as? PhotoTVC{
+            return UITargetedPreview(view: cell.containerView, parameters: parameters)
+        }else if let cell = tableView.cellForRow(at: indexPath) as? AudioTVC{
+            return UITargetedPreview(view: cell.containerView, parameters: parameters)
         }
-        
-        
+        return UITargetedPreview(view: UIView())
+
     }
     
 }

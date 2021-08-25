@@ -51,7 +51,7 @@ class PhotoTVC: UITableViewCell {
         super.awakeFromNib()
         imgView.applyBlurEffect()
         containerView.layer.cornerRadius = 20
-        
+        backGroundPhoto.applyBlurEffect()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectTapped))
         containerView.addGestureRecognizer(tapGesture)
         
@@ -85,7 +85,7 @@ class PhotoTVC: UITableViewCell {
         
         backGroundPhoto.image = with.image
         imgView.image = with.image
-        backGroundPhoto.applyBlurEffect()
+        
         
     }
     
