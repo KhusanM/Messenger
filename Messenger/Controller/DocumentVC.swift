@@ -21,16 +21,9 @@ class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionC
         super.viewDidLoad()
         
         
-        
-//        let documentDirUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-//        let fileNameWithExtension = url.absoluteString
-//        let indexFileUrl = documentDirUrl.appendingPathComponent(fileNameWithExtension)
-//        if FileManager.default.fileExists(atPath: indexFileUrl.path) {
-//            webView.loadFileURL(indexFileUrl, allowingReadAccessTo: documentDirUrl)
-//        }
-        
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
+        
         
         if #available(iOS 13.0, *) {
             let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))

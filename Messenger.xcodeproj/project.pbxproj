@@ -13,7 +13,6 @@
 		D025845526C3E7BA00150352 /* PhotoTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845326C3E7BA00150352 /* PhotoTVC.xib */; };
 		D025845726C3FFB400150352 /* FileTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D025845626C3FFB400150352 /* FileTVC.swift */; };
 		D025845926C3FFC600150352 /* FileTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D025845826C3FFC600150352 /* FileTVC.xib */; };
-		D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D025845E26C5232E00150352 /* GoogleService-Info.plist */; };
 		D02EAA4426CBCABF00CCD490 /* AudioTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D02EAA4226CBCABE00CCD490 /* AudioTVC.xib */; };
 		D02EAA4526CBCABF00CCD490 /* AudioTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EAA4326CBCABF00CCD490 /* AudioTVC.swift */; };
 		D02EAA4726CBCBA800CCD490 /* PulseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EAA4626CBCBA800CCD490 /* PulseButton.swift */; };
@@ -39,7 +38,6 @@
 		D025845326C3E7BA00150352 /* PhotoTVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotoTVC.xib; sourceTree = "<group>"; };
 		D025845626C3FFB400150352 /* FileTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileTVC.swift; sourceTree = "<group>"; };
 		D025845826C3FFC600150352 /* FileTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileTVC.xib; sourceTree = "<group>"; };
-		D025845E26C5232E00150352 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D02EAA4226CBCABE00CCD490 /* AudioTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioTVC.xib; sourceTree = "<group>"; };
 		D02EAA4326CBCABF00CCD490 /* AudioTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioTVC.swift; sourceTree = "<group>"; };
 		D02EAA4626CBCBA800CCD490 /* PulseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PulseButton.swift; sourceTree = "<group>"; };
@@ -122,7 +120,6 @@
 		D0EAA96D26C26CD000256412 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
-				D025845E26C5232E00150352 /* GoogleService-Info.plist */,
 				D0EAA96E26C26CD000256412 /* AppDelegate.swift */,
 				D0EAA98926C270D400256412 /* Helpers */,
 				D0EAA98626C270BA00256412 /* Model */,
@@ -241,7 +238,6 @@
 				D05E466C26CBA40900C98D5B /* DocumentVC.xib in Resources */,
 				D0EAA97B26C26CD800256412 /* LaunchScreen.storyboard in Resources */,
 				D0EAA97826C26CD800256412 /* Assets.xcassets in Resources */,
-				D025845F26C5232E00150352 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

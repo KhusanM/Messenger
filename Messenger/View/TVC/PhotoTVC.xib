@@ -119,7 +119,7 @@
                 <outlet property="realTimeLbl" destination="SVR-1d-liZ" id="2nb-Cf-A5S"/>
                 <outlet property="timerView" destination="l2W-P8-F8I" id="FcF-gu-IP2"/>
             </connections>
-            <point key="canvasLocation" x="305.07246376811594" y="130.58035714285714"/>
+            <point key="canvasLocation" x="217" y="135"/>
         </tableViewCell>
     </objects>
     <resources>

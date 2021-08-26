@@ -444,59 +444,35 @@ extension MainVC: UIImagePickerControllerDelegate, UINavigationControllerDelegat
 extension MainVC: UIDocumentPickerDelegate{
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         
-        
         guard let myURL = urls.first else {return}
-        
         guard let filename = urls.first?.lastPathComponent else{ return}
-        
-        
         // Start accessing a security-scoped resource.
         guard myURL.startAccessingSecurityScopedResource() else {
             // Handle the failure here.
             return
         }
-        
         // Make sure you release the security-scoped resource when you finish.
         defer { myURL.stopAccessingSecurityScopedResource() }
-
-        // Use file coordination for reading and writing any of the URL’s content.
-        var error: NSError? = nil
-        NSFileCoordinator().coordinate(readingItemAt: myURL, error: &error) { (url) in
-
-            let keys : [URLResourceKey] = [.nameKey, .isDirectoryKey]
-
-            // Get an enumerator for the directory's content.
-            guard let fileList =
-                    FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
-                Swift.debugPrint("*** Unable to access the contents of \(url.path) ***\n")
-                return
-            }
-
-            for case let file as URL in fileList {
-                // Start accessing the content's security-scoped URL.
-                guard url.startAccessingSecurityScopedResource() else {
-                    // Handle the failure here.
-                    continue
-                }
-
-                // Do something with the file here.
-                Swift.debugPrint("chosen file: \(file.lastPathComponent)")
-
-                // Make sure you release the security-scoped resource when you finish.
-                url.stopAccessingSecurityScopedResource()
-
-
-            }
-            print(url)
-
+        // Create data to be saved
+        let data = try! Data.init(contentsOf: myURL)
+        
+        let surl = self.getDocumentsDirectory().appendingPathComponent(filename)
+        do {
+            try data.write(to: surl)
+        } catch {
+            print(error.localizedDescription)
         }
         
-        
-         self.messages[0].append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: myURL, documentSize: "\(myURL.fileSizeString)"))
-        
+        self.messages[0].append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: surl, documentSize: "\(myURL.fileSizeString)"))
         
         tableViewReload(section: 0)
-        
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        // just send back the first one, which ought to be the only one
+        return paths[0]
     }
     
 }
