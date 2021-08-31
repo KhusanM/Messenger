@@ -10,7 +10,18 @@ import UIKit
 class ImagePresentVC: UIViewController {
 
     
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var scrollView: UIScrollView!{
+        didSet{
+            scrollView.minimumZoomScale = 1
+            scrollView.maximumZoomScale = 4
+            scrollView.zoomScale = 1
+            scrollView.bouncesZoom = false
+            scrollView.delegate = self
+            scrollView.showsVerticalScrollIndicator = false
+            scrollView.showsHorizontalScrollIndicator = false
+            scrollView.bouncesZoom = true
+        }
+    }
     
     @IBOutlet weak var imgView: UIImageView!
     
@@ -20,14 +31,7 @@ class ImagePresentVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imgView.image = img
-        scrollView.minimumZoomScale = 1
-        scrollView.maximumZoomScale = 4
-        scrollView.zoomScale = 1
-        scrollView.bouncesZoom = false
-        scrollView.delegate = self
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.bouncesZoom = true
+        
         
         doubleTap()
         shareBtn()

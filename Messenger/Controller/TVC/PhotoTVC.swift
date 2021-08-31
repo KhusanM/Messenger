@@ -11,12 +11,12 @@ import UIKit
 
 class PhotoTVC: UITableViewCell {
 
-    
+    static let identifier = "PhotoTVC"
     static func unib() -> UINib{
-        return UINib(nibName: "PhotoTVC", bundle: nil)
+        return UINib(nibName: identifier, bundle: nil)
     }
     
-    static let identifier = "PhotoTVC"
+    
     
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var backGroundPhoto: UIImageView!

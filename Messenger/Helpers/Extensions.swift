@@ -58,3 +58,30 @@ extension UIView {
 }
 
 
+//MARK: - Date String to String
+
+public class GetDate {
+    
+    
+    class func dateToString(date: String,format: String) -> String {
+        let formatter1 = DateFormatter()
+        formatter1.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter1.locale = Locale(identifier: "en_US_POSIX")
+        
+        if let date2 = formatter1.date(from: date) {
+            let formatter2 = DateFormatter()
+            formatter2.dateFormat = format
+            formatter2.locale = Locale(identifier: "en_US_POSIX")
+            let dateString = formatter2.string(from: date2)
+            
+            return dateString
+        }
+        return "Error"
+        
+    }
+}
+
+
+
+
+    

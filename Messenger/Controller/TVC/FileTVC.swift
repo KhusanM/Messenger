@@ -11,7 +11,7 @@ class FileTVC: UITableViewCell {
 
     static var identifier = "FileTVC"
     static func unib()->UINib{
-        return UINib(nibName: "FileTVC", bundle: nil)
+        return UINib(nibName: identifier, bundle: nil)
     }
 
     @IBOutlet weak var containerView: UIView!

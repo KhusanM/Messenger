@@ -9,11 +9,12 @@ import UIKit
 
 class MessageTVC: UITableViewCell {
 
+    static let identifier = "MessageTVC"
     static func unib() -> UINib{
-        return UINib(nibName: "MessageTVC", bundle: nil)
+        return UINib(nibName: identifier, bundle: nil)
     }
     
-    static let identifier = "MessageTVC"
+    
     
     @IBOutlet weak var checkImg: UIImageView!
     @IBOutlet weak var timeLbl: UILabel!
@@ -45,15 +46,15 @@ class MessageTVC: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func updateCell(message: MessageData){
+    func updateCell(message: MessagePageDM){
         
         containerView.clipsToBounds = true
         trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
         textLbl.text = message.text
+        timeLbl.text = GetDate.dateToString(date: message.time, format: "HH:mm")
         
-        
-        if message.isFistUser{
+        if message.from_ID == Keys.user_ID{
             containerView.backgroundColor = .systemGreen
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             checkImg.isHidden = false
