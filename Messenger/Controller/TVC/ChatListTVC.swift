@@ -34,10 +34,10 @@ class ChatListTVC: UITableViewCell {
     
     
     func updateCell(with: ChatPageDM){
-        nameLbl.text = with.name.fullName
+        nameLbl.text = with.user.fullName
         lastMessageLbl.text = with.lastMessage.text
         timeLbl.text = with.lastMessage.time
-        firstLetterOfName.text = String(with.name.fullName.prefix(1))
+        firstLetterOfName.text = String(with.user.fullName.prefix(1))
         
         
         //Time Handle
@@ -70,7 +70,7 @@ class ChatListTVC: UITableViewCell {
             }
             
         }else {
-            timeLbl.text = GetDate.dateToString(date: with.lastMessage.time, format: "MM/dd")  }
+            timeLbl.text = GetDate.dateToString(date: with.lastMessage.time, format: "dd/MM")  }
         
     }
     

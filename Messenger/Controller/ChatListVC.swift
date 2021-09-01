@@ -58,7 +58,7 @@ class ChatListVC: UIViewController {
                     }
                     
                     let lastMessage = LastMessage(text: i["last_message"]["text"].stringValue, type: i["last_message"]["type"].stringValue, time: i["last_message"]["created_at"].stringValue)
-                    let dm = ChatPageDM(name: self.user, lastMessage: lastMessage)
+                    let dm = ChatPageDM(user: self.user, lastMessage: lastMessage)
                     
                     self.chatListDM.append(dm)
                     
@@ -90,9 +90,9 @@ extension ChatListVC: UITableViewDelegate, UITableViewDataSource{
         tableView.deselectRow(at: indexPath, animated: true)
         
         let vc = MessagesVC(nibName: "MessagesVC", bundle: nil)
-        vc.title = chatListDM[indexPath.row].name.fullName
-        vc.chatID = chatListDM[indexPath.row].name.chat_ID
-        vc.userID = chatListDM[indexPath.row].name.user_ID
+        vc.title = chatListDM[indexPath.row].user.fullName
+        vc.chatID = chatListDM[indexPath.row].user.chat_ID
+        vc.userID = chatListDM[indexPath.row].user.user_ID
         navigationController?.pushViewController(vc, animated: true)
     }
 }
