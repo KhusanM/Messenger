@@ -50,13 +50,13 @@ class FileTVC: UITableViewCell {
         timerView.progressAnimation()
     }
     
-    func updateCell(file: MessageData){
+    func updateCell(file: MessagePageDM){
         
         trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
         
         
-        if file.isFistUser{
+        if file.from_ID == Keys.user_ID{
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             trailingConst.isActive = true
         }else{
@@ -65,8 +65,8 @@ class FileTVC: UITableViewCell {
         }
         
         
-        fileNameLbl.text = file.documentName
-        fileSizeLbl.text = file.documentSize
+        fileNameLbl.text = file.fileName
+        fileSizeLbl.text = file.fileSize
     }
     
 

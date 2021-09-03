@@ -97,8 +97,11 @@ class MessagesVC: UIViewController {
                     if i["type"].stringValue == "text"{
                         let dm = MessagePageDM(type: i["type"].stringValue, text: i["text"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue)
                         self.messageDM[0].insert(dm, at: 0)
-                    }else{
+                    }else if i["type"].stringValue == "photo"{
                         let imgDM = MessagePageDM(type: i["type"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue, imageURL: Keys.upload_url +  i["file"]["file_unique_id"].stringValue)
+                        self.messageDM[0].insert(imgDM, at: 0)
+                    }else{
+                        let imgDM = MessagePageDM(type: i["type"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue, fileName: i["file"]["file_name"].stringValue, fileURL: Keys.upload_url +  i["file"]["file_unique_id"].stringValue, fileSize: i["file"]["title"].stringValue)
                         self.messageDM[0].insert(imgDM, at: 0)
                     }
                     
@@ -277,6 +280,14 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
             cell.index = indexPath
             cell.delegate = self
             cell.updadeCell(message: messageDM[indexPath.section][indexPath.row])
+            cell.selectionStyle = .none
+            return cell
+            
+        } else if messageDM[indexPath.section][indexPath.row].fileURL != nil{
+            let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
+            cell.index = indexPath
+            cell.delegate = self
+            cell.updateCell(file: messageDM[indexPath.section][indexPath.row])
             cell.selectionStyle = .none
             return cell
             
@@ -543,25 +554,67 @@ extension MessagesVC: UIDocumentPickerDelegate{
         // Make sure you release the security-scoped resource when you finish.
         defer { myURL.stopAccessingSecurityScopedResource() }
         // Create data to be saved
-        let data = try! Data.init(contentsOf: myURL)
+        let fileData = try! Data.init(contentsOf: myURL)
 
         let surl = self.getDocumentsDirectory().appendingPathComponent(filename)
+        
+        let parameters: [String : Any] = [:]
+        
         do {
-            try data.write(to: surl)
+            try fileData.write(to: surl)
+            
+            AF.upload(multipartFormData: { multipart in
+                multipart.append(fileData, withName: "file", fileName: filename)
+                
+                for (key, value) in parameters {
+                    multipart.append("\(value)".data(using: .utf8)!, withName: key)
+                }
+            },
+            to: "http://95.216.191.94:8000/public/upload",
+            method: .post).responseJSON { response in
+                switch response.result {
+                
+                case .success(_):
+                    let data = JSON(response.data)
+                    
+                    print(data)
+                    let file_url = Keys.upload_url + data["data"].stringValue
+                    let file_unique_id = data["data"].stringValue
+
+                    let params: [String : Any] = ["type" : "document", "file_unique_id" : file_unique_id, "file_size": fileData.count, "file_name": filename, "title": surl.fileSizeString]
+
+                    Network.requestWithToken(url: "/file/create", method: .post, param: params) { data in
+
+                        if let data = data{
+
+//                                print(data,"***")
+                            let file_id = data["data"]["file_id"].stringValue
+
+                            Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "document", "file_id" : file_id, "chat_id": self.chatID]) { data in
+                                if let data = data{
+//                                        print(data,"-----")
+                                    self.messageDM[0].append(MessagePageDM(
+                                            from_ID: data["data"]["from_id"].intValue ,
+                                            time: data["data"]["created_at"].stringValue,
+                                            fileName: filename,
+                                            fileURL: file_url,
+                                            fileSize: surl.fileSizeString))
+
+                                    self.tableViewReload(section: 0)
+                                }
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
         } catch {
             print(error.localizedDescription)
         }
 
 
         
-//        Network.request(url: "95.216.191.94:8000/public/upload", method: .post, param: ["file": surl], header: nil) { data in
-//            if let data = data{
-//                print(data)
-//
-//
-//            }
-//        }
-        //self.messageDM[0].  append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: surl, documentSize: "\(myURL.fileSizeString)"))
 
         //tableViewReload(section: 0)
     }

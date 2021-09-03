@@ -15,7 +15,7 @@ struct MessagePageDM {
     var time: String?
     //file
     var fileName: String?
-    var fileURL: URL?
+    var fileURL: String?
     var fileSize: String?
     
     //image
