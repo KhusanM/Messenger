@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SDWebImage
 
 
 class PhotoTVC: UITableViewCell {
@@ -69,13 +69,13 @@ class PhotoTVC: UITableViewCell {
         timerView.progressAnimation()
     }
     
-    func updadeCell(with: MessageData){
+    func updadeCell(message: MessagePageDM){
 
         trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
+        realTimeLbl.text = GetDate.dateToString(date: message.time ?? "", format: "HH:mm")
         
-        
-        if with.isFistUser{
+        if message.from_ID == Keys.user_ID{
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]
             trailingConst.isActive = true
         }else{
@@ -83,8 +83,8 @@ class PhotoTVC: UITableViewCell {
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         }
         
-        backGroundPhoto.image = with.image
-        imgView.image = with.image
+        backGroundPhoto.sd_setImage(with: URL(string: message.imageURL!), completed: nil)
+        imgView.sd_setImage(with: URL(string: message.imageURL!), completed: nil)
         
         
     }

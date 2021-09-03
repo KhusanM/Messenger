@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ImagePresentVC: UIViewController {
 
@@ -25,12 +26,13 @@ class ImagePresentVC: UIViewController {
     
     @IBOutlet weak var imgView: UIImageView!
     
+    var url = ""
     var img = UIImage()
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        imgView.image = img
+        imgView.sd_setImage(with: URL(string: url), completed: nil)
         
         
         doubleTap()
@@ -57,7 +59,7 @@ class ImagePresentVC: UIViewController {
     
     @objc func shareBtnTapped() {
         
-        let data = [img] as [Any]
+        let data = [URL(string: url)] as [Any]
         let vc = UIActivityViewController(activityItems: data, applicationActivities: nil)
         
         present(vc, animated: true, completion: nil)

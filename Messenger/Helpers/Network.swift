@@ -19,7 +19,7 @@ class Network{
             
             HUD.show(.progress)
             
-            AF.request(AppData.base_chat_URL + url, method: method, parameters: param, encoding: JSONEncoding.default, headers: header).responseJSON { response in
+            AF.request(url, method: method, parameters: param, encoding: JSONEncoding.default, headers: header).responseJSON { response in
                 HUD.hide()
                 if let data = response.data{
                     complition(JSON(data))
@@ -57,6 +57,15 @@ class Network{
             ShowAlert.showAlert(text: "No connection to internet", forState: .error)
         }
     }
+    
+    
+    class func uploadImage() {
+        
+    }
+
+    
+
+    
     
     
 }

@@ -8,10 +8,18 @@
 import UIKit
 
 struct MessagePageDM {
-    var type: String
-    var text: String
-    var from_ID: Int
-    var time: String
+    //message
+    var type: String?
+    var text: String?
+    var from_ID: Int?
+    var time: String?
+    //file
+    var fileName: String?
+    var fileURL: URL?
+    var fileSize: String?
+    
+    //image
+    var imageURL: String?
     
     enum MediaType : String {
         case photo = "photo"

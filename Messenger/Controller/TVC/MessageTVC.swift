@@ -52,7 +52,7 @@ class MessageTVC: UITableViewCell {
         trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
         textLbl.text = message.text
-        timeLbl.text = GetDate.dateToString(date: message.time, format: "HH:mm")
+        timeLbl.text = GetDate.dateToString(date: message.time ?? "", format: "HH:mm")
         
         if message.from_ID == Keys.user_ID{
             containerView.backgroundColor = .systemGreen

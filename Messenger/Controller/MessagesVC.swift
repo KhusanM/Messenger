@@ -9,8 +9,9 @@ import UIKit
 import MobileCoreServices
 import AVFoundation
 import CloudKit
-
-
+import Alamofire
+import SwiftyJSON
+import SDWebImage
 
 
 
@@ -89,6 +90,7 @@ class MessagesVC: UIViewController {
     private func getMessageDM(){
         Network.requestWithToken(url: "/message/get-paging", method: .post, param: ["chat_id" : self.chatID, "page" : 1, "limit": totalItems]) { data in
             if let data = data{
+                print(data)
                 for i in data["data"].arrayValue {
                                     
                     let dm = MessagePageDM(type: i["type"].stringValue, text: i["text"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue)
@@ -96,6 +98,7 @@ class MessagesVC: UIViewController {
                 }
                 
                 self.tableView.reloadData()
+                self.tableView.scrollToRow(at: IndexPath(row: self.messageDM[0].count-1, section: 0), at: .bottom, animated: false)
             }
         }
     }
@@ -108,8 +111,6 @@ class MessagesVC: UIViewController {
                 let dm = MessagePageDM(type: data["data"]["type"].stringValue, text: data["data"]["text"].stringValue, from_ID: data["data"]["from_id"].intValue, time: data["data"]["created_at"].stringValue)
                 
                 self.messageDM[0].append(dm)
-                
-                
             }
             
             self.tableViewReload(section: 0)
@@ -135,7 +136,7 @@ class MessagesVC: UIViewController {
     
     func openFilePicker() {
         let documentPicker: UIDocumentPickerViewController = UIDocumentPickerViewController(documentTypes: ["public.data"], in: UIDocumentPickerMode.open)
-        //documentPicker.delegate = self
+        documentPicker.delegate = self
         
         self.present(documentPicker,animated: true,completion: nil)
     }
@@ -149,7 +150,7 @@ class MessagesVC: UIViewController {
             vc.sourceType = .photoLibrary
             vc.mediaTypes = [kUTTypeImage as String]
             
-            //vc.delegate = self
+            vc.delegate = self
             
             self.present(vc, animated: true, completion: nil)
         }
@@ -258,12 +259,22 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
 //                print("++++")
 //            }
 //        }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
-        cell.updateCell(message: messageDM[indexPath.section][indexPath.row])
-        cell.selectionStyle = .none
-        
-        return cell
+        if messageDM[indexPath.section][indexPath.row].text != nil{
+            let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
+            cell.updateCell(message: messageDM[indexPath.section][indexPath.row])
+            cell.selectionStyle = .none
+            
+            return cell
+        } else if messageDM[indexPath.section][indexPath.row].imageURL != nil{
+            let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
+            cell.index = indexPath
+            cell.delegate = self
+            cell.updadeCell(message: messageDM[indexPath.section][indexPath.row])
+            cell.selectionStyle = .none
+            return cell
+            
+        }
+        return UITableViewCell()
         
 //        if messages[indexPath.section][indexPath.row].image != nil{
 //            let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
@@ -442,64 +453,119 @@ extension MessagesVC: UITextViewDelegate{
 
 //MARK: - ImageView Delegate
 
-//extension MessagesVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//        let mediaType = info[UIImagePickerController.InfoKey.mediaType] as! CFString
-//        switch mediaType {
-//        case kUTTypeImage:
-//
-//            let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-//            let width = Int(originalImg.size.width / 10)
-//            let height = Int(originalImg.size.height / 10)
-//
-//            messages[0].append(MessageData(text: nil, isFistUser: isFirstUser, image: originalImg, imageHeight: height, imageWidth: width))
-//            tableViewReload(section: 0)
-//            isFirstUser = !isFirstUser
-//        default:
-//            break
-//        }
-//        picker.dismiss(animated: true, completion: nil)
-//    }
-//
-//}
+extension MessagesVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        let mediaType = info[UIImagePickerController.InfoKey.mediaType] as! CFString
+        switch mediaType {
+        case kUTTypeImage:
+
+            let originalImg = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+            
+            let parameters: [String : Any] = [:]
+            
+
+            // save image to URL
+            do {
+                let imgData = originalImg.jpegData(compressionQuality: 0.5)!
+                
+                let image = UIImage(data: imgData)
+                //print(image?.size, imgData.count)
+                AF.upload(multipartFormData: { multipart in
+                    multipart.append(imgData, withName: "file", fileName: "file.png", mimeType: "image/png")
+                    
+                    for (key, value) in parameters {
+                        multipart.append("\(value)".data(using: .utf8)!, withName: key)
+                    }
+                },
+                to: "http://95.216.191.94:8000/public/upload",
+                method: .post).responseJSON { response in
+                    switch response.result {
+                    
+                    case .success(_):
+                        let data = JSON(response.data)
+                        
+                        let image_url = "http://95.216.191.94:8000/public" + data["data"].stringValue
+                        
+                        let params: [String : Any] = ["type" : "photo", "file_unique_id" : image_url, "file_size": imgData.count, "width": image?.size.width ?? 300 , "height": image?.size.height ?? 250]
+                        
+                        Network.requestWithToken(url: "/file/create", method: .post, param: params) { data in
+                            
+                            if let data = data{
+                                
+                                //print(data,"***")
+                                let file_id = data["data"]["file_id"].stringValue
+                                
+                                Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "photo", "file_id" : file_id, "chat_id": self.chatID]) { data in
+                                    if let data = data{
+                                        //print(data)
+                                        self.messageDM[0].append(MessagePageDM(from_ID: data["data"]["from_id"].intValue ,time: data["data"]["created_at"].stringValue ,imageURL: image_url))
+                                        
+                                        self.tableViewReload(section: 0)
+                                    }
+                                }
+                            }
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+                
+            }
+        default:
+            break
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+}
 
 //MARK:- Document
+
+extension MessagesVC: UIDocumentPickerDelegate{
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+
+        guard let myURL = urls.first else {return}
+        guard let filename = urls.first?.lastPathComponent else{ return}
+        // Start accessing a security-scoped resource.
+        guard myURL.startAccessingSecurityScopedResource() else {
+            // Handle the failure here.
+            return
+        }
+        // Make sure you release the security-scoped resource when you finish.
+        defer { myURL.stopAccessingSecurityScopedResource() }
+        // Create data to be saved
+        let data = try! Data.init(contentsOf: myURL)
+
+        let surl = self.getDocumentsDirectory().appendingPathComponent(filename)
+        do {
+            try data.write(to: surl)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+
+        
+//        Network.request(url: "95.216.191.94:8000/public/upload", method: .post, param: ["file": surl], header: nil) { data in
+//            if let data = data{
+//                print(data)
 //
-//extension MessagesVC: UIDocumentPickerDelegate{
-//    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 //
-//        guard let myURL = urls.first else {return}
-//        guard let filename = urls.first?.lastPathComponent else{ return}
-//        // Start accessing a security-scoped resource.
-//        guard myURL.startAccessingSecurityScopedResource() else {
-//            // Handle the failure here.
-//            return
+//            }
 //        }
-//        // Make sure you release the security-scoped resource when you finish.
-//        defer { myURL.stopAccessingSecurityScopedResource() }
-//        // Create data to be saved
-//        let data = try! Data.init(contentsOf: myURL)
-//
-//        let surl = self.getDocumentsDirectory().appendingPathComponent(filename)
-//        do {
-//            try data.write(to: surl)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//
-//        self.messages[0].append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: surl, documentSize: "\(myURL.fileSizeString)"))
-//
-//        tableViewReload(section: 0)
-//    }
-//
-//    func getDocumentsDirectory() -> URL {
-//        // find all possible documents directories for this user
-//        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-//        // just send back the first one, which ought to be the only one
-//        return paths[0]
-//    }
-//
-//}
+        //self.messageDM[0].  append(MessageData(isFistUser: isFirstUser, documentName: filename, documentURL: surl, documentSize: "\(myURL.fileSizeString)"))
+
+        //tableViewReload(section: 0)
+    }
+
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        // just send back the first one, which ought to be the only one
+        return paths[0]
+    }
+
+}
 
 
 //MARK:- Keyboard Handling
@@ -557,41 +623,41 @@ extension MessagesVC{
 
 // MARK:- Push To ImagePresentVC And File and Voice
 
-//extension MessagesVC: ChatDelegate{
-//
-//    //FileVC
-//    func didSelectDocument(index: IndexPath) {
-//
-//        if #available(iOS 13.0, *) {
-//            let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
-//            vc.modalPresentationStyle = .fullScreen
-//            vc.url = messages[index.section][index.row].documentURL
-//            navigationController?.pushViewController(vc, animated: true)
-//        } else {
-//            // Fallback on earlier versions
-//        }
-//
-//
-//    }
-//
-//    //ImageVC
-//    func didSelectImage(index: IndexPath) {
-//        if messages[index.section][index.row].image != nil{
-//
-//            if #available(iOS 13.0, *) {
-//                let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
-//                vc.modalPresentationStyle = .fullScreen
-//                vc.img = messages[index.section][index.row].image!
-//                navigationController?.pushViewController(vc, animated: true)
-//            } else {
-//                // Fallback on earlier versions
-//            }
-//
-//        }
-//    }
-//
-//
-//}
+extension MessagesVC: ChatDelegate{
+
+    //FileVC
+    func didSelectDocument(index: IndexPath) {
+
+        if #available(iOS 13.0, *) {
+            let vc = DocumentVC(nibName: "DocumentVC", bundle: nil)
+            vc.modalPresentationStyle = .fullScreen
+            vc.url = messageDM[index.section][index.row].fileURL
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            // Fallback on earlier versions
+        }
+
+
+    }
+
+    //ImageVC
+    func didSelectImage(index: IndexPath) {
+        if messageDM[index.section][index.row].imageURL != nil{
+
+            if #available(iOS 13.0, *) {
+                let vc = ImagePresentVC(nibName: "ImagePresentVC", bundle: nil)
+                vc.modalPresentationStyle = .fullScreen
+                vc.url = messageDM[index.section][index.row].imageURL!
+                navigationController?.pushViewController(vc, animated: true)
+            } else {
+                // Fallback on earlier versions
+            }
+
+        }
+    }
+
+
+}
 
 
 //MARK:- Record Button Delegate
