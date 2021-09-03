@@ -49,8 +49,9 @@ class PhotoTVC: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        imgView.applyBlurEffect()
+        downloadImg.isHidden = true
         containerView.layer.cornerRadius = 20
+        //imgView.applyBlurEffect()
         backGroundPhoto.applyBlurEffect()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectTapped))
         containerView.addGestureRecognizer(tapGesture)
@@ -92,7 +93,7 @@ class PhotoTVC: UITableViewCell {
     @objc func didSelectTapped(){
         if !didSelect{
             downloadImg.isHidden = true
-            reloadView()
+            //reloadView()
             didSelect = true
             Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                 self.imgView.removeBlurEffect()

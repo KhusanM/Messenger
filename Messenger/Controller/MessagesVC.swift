@@ -67,7 +67,7 @@ class MessagesVC: UIViewController {
     var userID: Int = 0
     
     var messageDM : [[MessagePageDM]] = [[],[]]
-    let totalItems = 15
+    let totalItems = 5
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,11 +90,18 @@ class MessagesVC: UIViewController {
     private func getMessageDM(){
         Network.requestWithToken(url: "/message/get-paging", method: .post, param: ["chat_id" : self.chatID, "page" : 1, "limit": totalItems]) { data in
             if let data = data{
-                print(data)
+                
+//                print(data)
                 for i in data["data"].arrayValue {
                                     
-                    let dm = MessagePageDM(type: i["type"].stringValue, text: i["text"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue)
-                    self.messageDM[0].insert(dm, at: 0)
+                    if i["type"].stringValue == "text"{
+                        let dm = MessagePageDM(type: i["type"].stringValue, text: i["text"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue)
+                        self.messageDM[0].insert(dm, at: 0)
+                    }else{
+                        let imgDM = MessagePageDM(type: i["type"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue, imageURL: Keys.upload_url +  i["file"]["file_unique_id"].stringValue)
+                        self.messageDM[0].insert(imgDM, at: 0)
+                    }
+                    
                 }
                 
                 self.tableView.reloadData()
@@ -485,20 +492,21 @@ extension MessagesVC: UIImagePickerControllerDelegate, UINavigationControllerDel
                     case .success(_):
                         let data = JSON(response.data)
                         
-                        let image_url = "http://95.216.191.94:8000/public" + data["data"].stringValue
+                        let image_url = Keys.upload_url + data["data"].stringValue
+                        let file_unique_id = data["data"].stringValue
                         
-                        let params: [String : Any] = ["type" : "photo", "file_unique_id" : image_url, "file_size": imgData.count, "width": image?.size.width ?? 300 , "height": image?.size.height ?? 250]
+                        let params: [String : Any] = ["type" : "photo", "file_unique_id" : file_unique_id, "file_size": imgData.count, "width": image?.size.width ?? 300 , "height": image?.size.height ?? 250]
                         
                         Network.requestWithToken(url: "/file/create", method: .post, param: params) { data in
                             
                             if let data = data{
                                 
-                                //print(data,"***")
+//                                print(data,"***")
                                 let file_id = data["data"]["file_id"].stringValue
                                 
                                 Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "photo", "file_id" : file_id, "chat_id": self.chatID]) { data in
                                     if let data = data{
-                                        //print(data)
+//                                        print(data,"-----")
                                         self.messageDM[0].append(MessagePageDM(from_ID: data["data"]["from_id"].intValue ,time: data["data"]["created_at"].stringValue ,imageURL: image_url))
                                         
                                         self.tableViewReload(section: 0)

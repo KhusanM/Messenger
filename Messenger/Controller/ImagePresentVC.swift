@@ -59,7 +59,7 @@ class ImagePresentVC: UIViewController {
     
     @objc func shareBtnTapped() {
         
-        let data = [URL(string: url)] as [Any]
+        let data = [imgView.image] as [Any]
         let vc = UIActivityViewController(activityItems: data, applicationActivities: nil)
         
         present(vc, animated: true, completion: nil)
