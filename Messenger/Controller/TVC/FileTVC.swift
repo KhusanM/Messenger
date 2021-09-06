@@ -40,6 +40,9 @@ class FileTVC: UITableViewCell {
         super.awakeFromNib()
         containerView.layer.cornerRadius = 20
         
+        fileImg.isHidden = false
+        downloadImg.isHidden = true
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectTapped))
         fileView.addGestureRecognizer(tapGesture)
         
@@ -54,7 +57,7 @@ class FileTVC: UITableViewCell {
         
         trailingConst = containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
         leadingConst = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
-        
+        timeLbl.text = GetDate.dateToString(date: file.time ?? "", format: "HH:mm")
         
         if file.from_ID == Keys.user_ID{
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,.layerMinXMaxYCorner]

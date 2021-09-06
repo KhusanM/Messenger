@@ -294,33 +294,7 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
         }
         return UITableViewCell()
         
-//        if messages[indexPath.section][indexPath.row].image != nil{
-//            let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTVC.identifier, for: indexPath) as! PhotoTVC
-//            cell.index = indexPath
-//            cell.delegate = self
-//            cell.realTimeLbl.text = realTime()
-//            cell.updadeCell(with: messages[indexPath.section][indexPath.row])
-//            cell.selectionStyle = .none
-//            return cell
-//
-//        }else if messages[indexPath.section][indexPath.row].text != nil{
-//            let cell = tableView.dequeueReusableCell(withIdentifier: MessageTVC.identifier, for: indexPath) as! MessageTVC
-//            cell.timeLbl.text = realTime()
-//            cell.updateCell(message: messages[indexPath.section][indexPath.row])
-//
-//            cell.selectionStyle = .none
-//
-//            return cell
-//
-//        }else if messages[indexPath.section][indexPath.row].documentURL != nil{
-//            let cell = tableView.dequeueReusableCell(withIdentifier: FileTVC.identifier, for: indexPath) as! FileTVC
-//            cell.index = indexPath
-//            cell.timeLbl.text = realTime()
-//            cell.delegate = self
-//            cell.updateCell(file: messages[indexPath.section][indexPath.row])
-//            cell.selectionStyle = .none
-//            return cell
-//        }else{
+//}else{
 //            let cell = tableView.dequeueReusableCell(withIdentifier: AudioTVC.identifair, for: indexPath) as! AudioTVC
 //            cell.index = indexPath
 //            cell.realTimeLbl.text = realTime()
@@ -332,70 +306,70 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
     }
     
     @available(iOS 13.0, *)
-//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//
-//        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) {[self] _  in
-//
-//            if let _ = tableView.cellForRow(at: indexPath) as? MessageTVC {
-//
-//                if messages[indexPath.section][indexPath.row].isFistUser{
-//                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-//                        UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
-//                    }
-//
-//                    let edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
-//                        self.isEditingText = true
-//                        self.indexEditText = indexPath
-//                        self.textView.text = messages[indexPath.section][indexPath.row].text
-//                    }
-//                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-//
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) {[self] _  in
+
+            if let _ = tableView.cellForRow(at: indexPath) as? MessageTVC {
+
+                if messageDM[indexPath.section][indexPath.row].from_ID == Keys.user_ID{
+                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = messageDM[indexPath.section][indexPath.row].text
+                    }
+
+                    let edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
+                        self.isEditingText = true
+                        self.indexEditText = indexPath
+                        self.textView.text = messageDM[indexPath.section][indexPath.row].text
+                    }
+                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                            self.messages[indexPath.section].remove(at: indexPath.row)
+//                            self.messageDM[indexPath.section].remove(at: indexPath.row)
 //                            self.tableView.deleteRows(at: [indexPath], with: .fade)
 //                        }
-//                    }
-//                    return UIMenu(title: "", children: [copy,edit, delete])
-//
-//                }else{
-//                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-//                        UIPasteboard.general.string = messages[indexPath.section][indexPath.row].text
-//                    }
-//
-//                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    }
+                    return UIMenu(title: "", children: [copy,edit, delete])
+
+                }else{
+                    let copy = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = messageDM[indexPath.section][indexPath.row].text
+                    }
+
+                    let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                            self.messages[indexPath.section].remove(at: indexPath.row)
+//                            self.messageDM[indexPath.section].remove(at: indexPath.row)
 //                            self.tableView.deleteRows(at: [indexPath], with: .fade)
 //                        }
-//                    }
-//                    return UIMenu(title: "", children: [copy, delete])
-//                }
-//
-//            }else if let _ = tableView.cellForRow(at: indexPath) as? PhotoTVC{
-//                let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
-//                    UIImageWriteToSavedPhotosAlbum(messages[indexPath.section][indexPath.row].image!, nil, nil, nil)
-//                }
-//
-//                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    }
+                    return UIMenu(title: "", children: [copy, delete])
+                }
+
+            }else if let _ = tableView.cellForRow(at: indexPath) as? PhotoTVC{
+                let saveToCameraRoll = UIAction(title: "Save To Camera Roll", image: UIImage(systemName: "square.and.arrow.down")) { _ in
+                    //UIImageWriteToSavedPhotosAlbum(messageDM[indexPath.section][indexPath.row].imageURL!, nil, nil, nil)
+                }
+
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 //                        self.messages[indexPath.section].remove(at: indexPath.row)
 //                        self.tableView.deleteRows(at: [indexPath], with: .fade)
 //                    }
-//                }
-//                return UIMenu(title: "", children: [saveToCameraRoll, delete])
-//
-//            }else{
-//                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                }
+                return UIMenu(title: "", children: [saveToCameraRoll, delete])
+
+            }else{
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 //                        self.messages[indexPath.section].remove(at: indexPath.row)
 //                        self.tableView.deleteRows(at: [indexPath], with: .fade)
 //                    }
-//                }
-//                return UIMenu(title: "", children: [delete])
-//            }
-//        }
-//    }
-//
+                }
+                return UIMenu(title: "", children: [delete])
+            }
+        }
+    }
+
     
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -613,10 +587,6 @@ extension MessagesVC: UIDocumentPickerDelegate{
             print(error.localizedDescription)
         }
 
-
-        
-
-        //tableViewReload(section: 0)
     }
 
     func getDocumentsDirectory() -> URL {

@@ -84,9 +84,8 @@ class PhotoTVC: UITableViewCell {
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         }
         
-        backGroundPhoto.sd_setImage(with: URL(string: message.imageURL!), completed: nil)
-        imgView.sd_setImage(with: URL(string: message.imageURL!), completed: nil)
-        
+        imgView.sd_setImage(with: URL(string: message.imageURL!), placeholderImage: UIImage(named: "loading"))
+        backGroundPhoto.sd_setImage(with: URL(string: message.imageURL!))
         
     }
     
