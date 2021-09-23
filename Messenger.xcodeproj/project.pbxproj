@@ -19,7 +19,7 @@
 		D02EAA4726CBCBA800CCD490 /* PulseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EAA4626CBCBA800CCD490 /* PulseButton.swift */; };
 		D0386C2F26D7712C0050943B /* MessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0386C2E26D7712C0050943B /* MessageData.swift */; };
 		D04D94FE26DE05D9000E88CB /* MessagePageDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04D94FD26DE05D9000E88CB /* MessagePageDM.swift */; };
-		D04D950026DE633F000E88CB /* MyRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04D94FF26DE633F000E88CB /* MyRealm.swift */; };
+		D04D950226E5FFB1000E88CB /* MyRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04D950126E5FFB1000E88CB /* MyRealm.swift */; };
 		D058B0F026DD03CF0049EE1C /* ChatPageDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D058B0EF26DD03CF0049EE1C /* ChatPageDM.swift */; };
 		D05E466226CB87BD00C98D5B /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466126CB87BD00C98D5B /* TimerView.swift */; };
 		D05E466B26CBA40900C98D5B /* DocumentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05E466926CBA40900C98D5B /* DocumentVC.swift */; };
@@ -60,7 +60,7 @@
 		D02EAA4626CBCBA800CCD490 /* PulseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PulseButton.swift; sourceTree = "<group>"; };
 		D0386C2E26D7712C0050943B /* MessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageData.swift; sourceTree = "<group>"; };
 		D04D94FD26DE05D9000E88CB /* MessagePageDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePageDM.swift; sourceTree = "<group>"; };
-		D04D94FF26DE633F000E88CB /* MyRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRealm.swift; sourceTree = "<group>"; };
+		D04D950126E5FFB1000E88CB /* MyRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRealm.swift; sourceTree = "<group>"; };
 		D058B0EF26DD03CF0049EE1C /* ChatPageDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPageDM.swift; sourceTree = "<group>"; };
 		D05E466126CB87BD00C98D5B /* TimerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		D05E466926CBA40900C98D5B /* DocumentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentVC.swift; sourceTree = "<group>"; };
@@ -207,7 +207,7 @@
 		D0EAA98926C270D400256412 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				D04D94FF26DE633F000E88CB /* MyRealm.swift */,
+				D04D950126E5FFB1000E88CB /* MyRealm.swift */,
 				D05E466D26CBC3B200C98D5B /* Extensions.swift */,
 				D088F18626DCF668008ADAFD /* Reachability.swift */,
 				D088F18526DCF668008ADAFD /* Alert.swift */,
@@ -375,7 +375,7 @@
 				D0EAA98426C270B000256412 /* MessagesVC.swift in Sources */,
 				D0386C2F26D7712C0050943B /* MessageData.swift in Sources */,
 				D088F18C26DCF756008ADAFD /* AppData.swift in Sources */,
-				D04D950026DE633F000E88CB /* MyRealm.swift in Sources */,
+				D04D950226E5FFB1000E88CB /* MyRealm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

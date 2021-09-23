@@ -28,7 +28,7 @@ class FileTVC: UITableViewCell {
     var leadingConst: NSLayoutConstraint!
     var index: IndexPath!
     var delegate: ChatDelegate?
-    var didSelect = false
+    var didSelect = true
     
     override func prepareForReuse() {
         super.prepareForReuse()

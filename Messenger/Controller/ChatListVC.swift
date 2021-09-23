@@ -8,7 +8,7 @@
 import UIKit
 import SwiftyJSON
 import Alamofire
-
+import RealmSwift
 
 class ChatListVC: UIViewController {
 
@@ -22,24 +22,30 @@ class ChatListVC: UIViewController {
         }
     }
     
-    var chatListDM :[ChatPageDM] = []
-    var user: UserDM!
+    var user: [UserDM] = []
+    var lastMessage: [LastMessage] = []
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Messages"
         
-       getUserDM()
+        navigationItem.title = "Messages"
+         
+        if Reachability.isConnectedToNetwork() {
+            getUserDM()
+        } else {
+            fetchData()
+        }
+        
         if #available(iOS 13.0, *) {
             navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "circle"), style: .done, target: self, action: #selector(reload))
         } else {
             // Fallback on earlier versions
         }
+        
     }
     
     @objc func reload(){
-        chatListDM.removeAll()
         getUserDM()
     }
     
@@ -47,27 +53,47 @@ class ChatListVC: UIViewController {
     private func getUserDM(){
         Network.requestWithToken(url: "/chat/get-paging", method: .post, param: ["page" : 1, "limit": 10]) { data in
             if let data = data{
+                
+                self.user.removeAll()
+                self.lastMessage.removeAll()
+                
                 for i in data["data"]["data"].arrayValue {
                     
                     if  i["second"]["user_id"].intValue != Keys.user_ID {
-                        self.user = UserDM(fullName: i["second"]["full_name"].stringValue , user_ID:  i["second"]["user_id"].intValue, chat_ID: i["chat_id"].intValue )
-                        
+                        let user2 = UserDM()
+                        user2.chat_ID = i["chat_id"].intValue
+                        user2.fullName = i["second"]["full_name"].stringValue
+                        user2.user_ID = i["second"]["user_id"].intValue
+                        self.user.append(user2)
                     }else {
-                        
-                        self.user = UserDM(fullName: i["first"]["full_name"].stringValue , user_ID: i["first"]["user_id"].intValue, chat_ID: i["chat_id"].intValue )
+                        let user1 = UserDM()
+                        user1.chat_ID = i["chat_id"].intValue
+                        user1.fullName = i["first"]["full_name"].stringValue
+                        user1.user_ID = i["first"]["user_id"].intValue
+                        self.user.append(user1)
                     }
                     
-                    let lastMessage = LastMessage(text: i["last_message"]["text"].stringValue, type: i["last_message"]["type"].stringValue, time: i["last_message"]["created_at"].stringValue)
-                    let dm = ChatPageDM(user: self.user, lastMessage: lastMessage)
+                    let lastM = LastMessage()
+                    lastM.text = i["last_message"]["text"].stringValue
+                    lastM.type = i["last_message"]["type"].stringValue
+                    lastM.time = i["last_message"]["created_at"].stringValue
+                    lastM._id = i["last_message"]["_id"].stringValue
                     
-                    self.chatListDM.append(dm)
-                    
+                    self.lastMessage.append(lastM)
                 }
+                
                 self.tableView.reloadData()
                 
-                
+                MyRealm.shared.saveItemsUser(item: self.user)
+                MyRealm.shared.saveItemsLastM(item: self.lastMessage)
             }
         }
+    }
+    
+    func fetchData(){
+        user = MyRealm.shared.fetchUserData()
+        lastMessage = MyRealm.shared.fetchLastMessageData()
+        tableView.reloadData()
     }
     
 
@@ -75,12 +101,12 @@ class ChatListVC: UIViewController {
 
 extension ChatListVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.chatListDM.count
+        return self.user.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ChatListTVC.identifair, for: indexPath) as! ChatListTVC
-        cell.updateCell(with: chatListDM[indexPath.row])
+        cell.updateCell(user: user[indexPath.row], lastMessage: lastMessage[indexPath.row])
         
         return cell
     }
@@ -90,9 +116,9 @@ extension ChatListVC: UITableViewDelegate, UITableViewDataSource{
         tableView.deselectRow(at: indexPath, animated: true)
         
         let vc = MessagesVC(nibName: "MessagesVC", bundle: nil)
-        vc.title = chatListDM[indexPath.row].user.fullName
-        vc.chatID = chatListDM[indexPath.row].user.chat_ID
-        vc.userID = chatListDM[indexPath.row].user.user_ID
+        vc.title = user[indexPath.row].fullName
+        vc.chatID = user[indexPath.row].chat_ID
+        vc.userID = user[indexPath.row].user_ID
         navigationController?.pushViewController(vc, animated: true)
     }
 }

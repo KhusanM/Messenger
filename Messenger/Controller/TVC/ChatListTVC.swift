@@ -33,27 +33,28 @@ class ChatListTVC: UITableViewCell {
     }
     
     
-    func updateCell(with: ChatPageDM){
-        nameLbl.text = with.user.fullName
-        lastMessageLbl.text = with.lastMessage.text
-        timeLbl.text = with.lastMessage.time
-        firstLetterOfName.text = String(with.user.fullName.prefix(1))
+    func updateCell(user: UserDM, lastMessage: LastMessage){
+        nameLbl.text = user.fullName
+        lastMessageLbl.text = lastMessage.text
+        timeLbl.text = lastMessage.time
+        firstLetterOfName.text = String(user.fullName.prefix(1))
         
+        let time = lastMessage.time
         
         //Time Handle
-        guard let day = Int(GetDate.dateToString(date: with.lastMessage.time, format: "dd")) else { return print("ErrorDay") }
+        guard let day = Int(GetDate.dateToString(date: time, format: "dd")) else { return print("ErrorDay") }
         guard let currentDay = Int(currentDateFormat(format: "dd")) else { return print("ErrorCurrentDay") }
         
-        if GetDate.dateToString(date: with.lastMessage.time, format: "yyyy-MM-dd") == currentDateFormat(format: "yyyy-MM-dd") {
-            timeLbl.text = GetDate.dateToString(date: with.lastMessage.time, format: "HH:mm")
+        if GetDate.dateToString(date: time, format: "yyyy-MM-dd") == currentDateFormat(format: "yyyy-MM-dd") {
+            timeLbl.text = GetDate.dateToString(date: time, format: "HH:mm")
             
-        }else if GetDate.dateToString(date: with.lastMessage.time, format: "yyyy-MM") == currentDateFormat(format: "yyyy-MM") && abs(currentDay - day) <= 7 {
+        }else if GetDate.dateToString(date: time, format: "yyyy-MM") == currentDateFormat(format: "yyyy-MM") && abs(currentDay - day) <= 7 {
             
             let formatter1 = DateFormatter()
             formatter1.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
             formatter1.locale = Locale(identifier: "en_US_POSIX")
             
-            if let date2 = formatter1.date(from: with.lastMessage.time) {
+            if let date2 = formatter1.date(from: time) {
                 let weekday = Calendar.current.component(.weekday, from: date2 )
                 var week = ""
                 switch weekday {
@@ -70,7 +71,7 @@ class ChatListTVC: UITableViewCell {
             }
             
         }else {
-            timeLbl.text = GetDate.dateToString(date: with.lastMessage.time, format: "dd/MM")  }
+            timeLbl.text = GetDate.dateToString(date: time, format: "MM/dd")  }
         
     }
     

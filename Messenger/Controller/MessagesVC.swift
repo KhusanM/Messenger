@@ -67,13 +67,21 @@ class MessagesVC: UIViewController {
     var userID: Int = 0
     
     var messageDM : [[MessagePageDM]] = [[],[]]
-    let totalItems = 5
+    let totalItems = 15
+    
+    var page = 1
+    var isLoading = false
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        keyboardHandling()
-        getMessageDM()
         
+        keyboardHandling()
+        if Reachability.isConnectedToNetwork() {
+            getMessageDM()
+        } else {
+            fetchData()
+        }
         
         if #available(iOS 13.0, *) {
             navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "circle"), style: .done, target: self, action: #selector(reload))
@@ -85,42 +93,87 @@ class MessagesVC: UIViewController {
     @objc func reload(){
         messageDM = [[],[]]
         getMessageDM()
+        
+    }
+    
+    func fetchData(){
+        messageDM[0] = MyRealm.shared.fetchMessagePageDM(in: self.chatID, for: Date())
+        tableView.reloadData()
     }
     
     private func getMessageDM(){
-        Network.requestWithToken(url: "/message/get-paging", method: .post, param: ["chat_id" : self.chatID, "page" : 1, "limit": totalItems]) { data in
+        isLoading = true
+        Network.requestWithToken(url: "/message/get-paging", method: .post, param: ["chat_id" : self.chatID, "page" : page, "limit": totalItems]) { [self] data in
             if let data = data{
                 
 //                print(data)
                 for i in data["data"].arrayValue {
-                                    
+                    
                     if i["type"].stringValue == "text"{
-                        let dm = MessagePageDM(type: i["type"].stringValue, text: i["text"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue)
+                        let dm = MessagePageDM()
+                        
+                        dm.type = i["type"].stringValue
+                        dm.text = i["text"].stringValue
+                        dm.from_ID = i["from_id"].intValue
+                        dm.time = i["created_at"].stringValue
+                        dm.chat_ID = i["chat_id"].intValue
+                        
                         self.messageDM[0].insert(dm, at: 0)
                     }else if i["type"].stringValue == "photo"{
-                        let imgDM = MessagePageDM(type: i["type"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue, imageURL: Keys.upload_url +  i["file"]["file_unique_id"].stringValue)
+                        let imgDM = MessagePageDM()
+                        imgDM.type = i["type"].stringValue
+                        imgDM.from_ID = i["from_id"].intValue
+                        imgDM.time = i["created_at"].stringValue
+                        imgDM.imageURL = Keys.upload_url +  i["file"]["file_unique_id"].stringValue
+                        imgDM.chat_ID = i["chat_id"].intValue
+                        
                         self.messageDM[0].insert(imgDM, at: 0)
                     }else{
-                        let imgDM = MessagePageDM(type: i["type"].stringValue, from_ID: i["from_id"].intValue, time: i["created_at"].stringValue, fileName: i["file"]["file_name"].stringValue, fileURL: Keys.upload_url +  i["file"]["file_unique_id"].stringValue, fileSize: i["file"]["title"].stringValue)
-                        self.messageDM[0].insert(imgDM, at: 0)
+                        let fileDM = MessagePageDM()
+                        fileDM.type = i["type"].stringValue
+                        fileDM.from_ID = i["from_id"].intValue
+                        fileDM.time = i["created_at"].stringValue
+                        fileDM.fileName = i["file"]["file_name"].stringValue
+                        fileDM.fileURL = Keys.upload_url +  i["file"]["file_unique_id"].stringValue
+                        fileDM.fileSize = i["file"]["title"].stringValue
+                        fileDM.chat_ID = i["chat_id"].intValue
+                        
+                        self.messageDM[0].insert(fileDM, at: 0)
                     }
                     
                 }
                 
+                isLoading = !(data["data"].arrayValue.count == totalItems)
+                
+                MyRealm.shared.saveItemsMessage(item: self.messageDM[0])
+                
                 self.tableView.reloadData()
-                self.tableView.scrollToRow(at: IndexPath(row: self.messageDM[0].count-1, section: 0), at: .bottom, animated: false)
+                if page == 1 {
+                    self.tableView.scrollToRow(at: IndexPath(row: self.messageDM[0].count-1, section: 0), at: .bottom, animated: false)
+                } else {
+                    self.tableView.scrollToRow(at: IndexPath(row: 19, section: 0), at: .bottom, animated: false)
+                }
+                self.page += 1
             }
         }
     }
     
-    private func sendMessage(){
+    private func sendTextMessage(){
         Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "text", "text" : textView.text!, "user_id": userID]) { data in
             if let data = data{
                 
                 
-                let dm = MessagePageDM(type: data["data"]["type"].stringValue, text: data["data"]["text"].stringValue, from_ID: data["data"]["from_id"].intValue, time: data["data"]["created_at"].stringValue)
+                let dm = MessagePageDM()
+                
+                dm.type = data["data"]["type"].stringValue
+                dm.text = data["data"]["text"].stringValue
+                dm.from_ID = data["data"]["from_id"].intValue
+                dm.time = data["data"]["created_at"].stringValue
+                dm.chat_ID = data["data"]["chat_id"].intValue
                 
                 self.messageDM[0].append(dm)
+                
+                MyRealm.shared.saveItemsMessage(item: self.messageDM[0])
             }
             
             self.tableViewReload(section: 0)
@@ -194,7 +247,7 @@ class MessagesVC: UIViewController {
             isEditingText = false
         }else{
             if !textView.text!.isEmpty {
-                sendMessage()
+                sendTextMessage()
                 textView.text.removeAll()
             }else{
                 
@@ -245,13 +298,14 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if messageDM[section].count == 0{
+        if messageDM[section].count == 0 {
             return 0
-        }else{
+        } else {
             return 29
         }
         
     }
+    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 49
     }
@@ -405,6 +459,18 @@ extension MessagesVC: UITableViewDelegate, UITableViewDataSource{
 
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        //print(indexPath.row, isLoading,page)
+        
+        if (indexPath.row == 0) && (!isLoading) && (page != 1) {
+            getMessageDM()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(indexPath.row)
+    }
+    
 }
 
 
@@ -492,9 +558,17 @@ extension MessagesVC: UIImagePickerControllerDelegate, UINavigationControllerDel
                                 Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "photo", "file_id" : file_id, "chat_id": self.chatID]) { data in
                                     if let data = data{
 //                                        print(data,"-----")
-                                        self.messageDM[0].append(MessagePageDM(from_ID: data["data"]["from_id"].intValue ,time: data["data"]["created_at"].stringValue ,imageURL: image_url))
+                                        
+                                        let dm = MessagePageDM()
+                                        
+                                        dm.from_ID = data["data"]["from_id"].intValue
+                                        dm.time = data["data"]["created_at"].stringValue
+                                        dm.imageURL = image_url
+                                        dm.chat_ID = data["data"]["chat_id"].intValue
+                                        self.messageDM[0].append(dm)
                                         
                                         self.tableViewReload(section: 0)
+                                        MyRealm.shared.saveItemsMessage(item: self.messageDM[0])
                                     }
                                 }
                             }
@@ -567,14 +641,20 @@ extension MessagesVC: UIDocumentPickerDelegate{
                             Network.requestWithToken(url: "/message/send", method: .post, param: ["type" : "document", "file_id" : file_id, "chat_id": self.chatID]) { data in
                                 if let data = data{
 //                                        print(data,"-----")
-                                    self.messageDM[0].append(MessagePageDM(
-                                            from_ID: data["data"]["from_id"].intValue ,
-                                            time: data["data"]["created_at"].stringValue,
-                                            fileName: filename,
-                                            fileURL: file_url,
-                                            fileSize: surl.fileSizeString))
+                                    
+                                    let dm = MessagePageDM()
+                                    
+                                    dm.from_ID = data["data"]["from_id"].intValue
+                                    dm.time = data["data"]["created_at"].stringValue
+                                    dm.fileName = filename
+                                    dm.fileURL = file_url
+                                    dm.fileSize = surl.fileSizeString
+                                    dm.chat_ID = data["data"]["chat_id"].intValue
+                                    
+                                    self.messageDM[0].append(dm)
 
                                     self.tableViewReload(section: 0)
+                                    MyRealm.shared.saveItemsMessage(item: self.messageDM[0])
                                 }
                             }
                         }
@@ -702,3 +782,4 @@ extension MessagesVC: ChatDelegate{
 //
 //
 //}
+

@@ -9,6 +9,7 @@
 import UIKit
 import WebKit
 import CloudKit
+import PKHUD
 
 class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionControllerDelegate{
 
@@ -23,6 +24,9 @@ class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionC
         webView.load(URLRequest(url: URL(string: url)!))
         webView.allowsBackForwardNavigationGestures = true
         
+        if webView.isLoading{
+            HUD.show(.progress)
+        }
         
         if #available(iOS 13.0, *) {
             let shareBtn = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(shareBtnTapped))
@@ -34,7 +38,9 @@ class DocumentVC: UIViewController, WKNavigationDelegate, UIDocumentInteractionC
         
     }
     
-    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        HUD.hide()
+    }
     
     @objc func shareBtnTapped() {
         

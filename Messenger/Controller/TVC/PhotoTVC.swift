@@ -36,7 +36,7 @@ class PhotoTVC: UITableViewCell {
 
     var delegate: ChatDelegate?
     var index : IndexPath!
-    var didSelect = false
+    var didSelect = true
     
     
     

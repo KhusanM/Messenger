@@ -6,25 +6,25 @@
 //
 
 import UIKit
+import RealmSwift
 
-struct MessagePageDM {
+class MessagePageDM: Object {
     //message
-    var type: String?
-    var text: String?
-    var from_ID: Int?
-    var time: String?
+    @objc dynamic var type: String?
+    @objc dynamic var text: String?
+    @objc dynamic var from_ID: Int = 0
+    @objc dynamic var time: String?
+    @objc dynamic var chat_ID: Int = 4
     //file
-    var fileName: String?
-    var fileURL: String?
-    var fileSize: String?
-    
+    @objc dynamic var fileName: String?
+    @objc dynamic var fileURL: String?
+    @objc dynamic var fileSize: String?
     //image
-    var imageURL: String?
+    @objc dynamic var imageURL: String?
     
-    enum MediaType : String {
-        case photo = "photo"
-        case audio = "audio"
-        case file = "document"
+    
+    override class func primaryKey() -> String? {
+        "time"
     }
 }
 
